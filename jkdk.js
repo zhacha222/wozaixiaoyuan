@@ -1,20 +1,21 @@
-
 /**
-
- 我在校园签到
+ 作者QQ:1483081359
+ 日期：7-14
+ 微信小程序：我在校园 健康打卡
+ github仓库：  https://github.com/zhacha222/wozaixiaoyuan
 
  变量格式：export wzxy_jkdk='{
-
             "username": "手机号",
             "password": "密码",
             "location":"118.911429,64.376742",
             "answers"=["0","0","1","0","36.2","没有","1","1","2"],
             "mark": "打卡用户"
-    }
- '
+            }'
 
+
+ cron: 3 8 * * *
  */
-
+//cron: 3 0,10 * * *
 const $ = new Env('健康打卡');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const fs = require("fs");
@@ -23,7 +24,6 @@ const {log} = console;
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
 //////////////////////
 let scriptVersion = "1.0.0";
-
 let scriptVersionLatest = '';
 
 //我在校园账号数据
@@ -53,7 +53,7 @@ let status_code = 0;
                 8 * 60 * 60 * 1000).toLocaleString()} \n=============================================\n`);
 
             await poem();
-            // await getVersion();
+             await getVersion();
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
             log(`\n=================== 共找到 ${wzxy_jkdkArr.length} 个账号 ===================`)
 
@@ -71,25 +71,25 @@ let status_code = 0;
                 location = content.location
                 answers = JSON.stringify(content.answers)
                 mark = content.mark
-
+                log(`打卡用户：${mark}`)
                 loginBack = 0;//置0，防止上一个号影响下一个号
-                log('【开始检查jwsession是否存在】');
+                log('开始检查jwsession是否存在...');
                 await checkJwsession()
                 await $.wait(2 * 1000);
 
                 if (loginBack) {
 
-                    log('【开始获取打卡列表】');
+                    log('开始获取打卡列表...');
                     await PunchIn()
                     await $.wait(2 * 1000);
 
-                    if (PunchInBack) {
-                        log('【正在请求地址信息】');
+                    if (PunchInBack > 0) {
+                        log('正在请求地址信息...');
                         await requestAddress()
                         await $.wait(2 * 1000);
 
                         if (requestAddressBack) {
-                            log('【开始晚签】');
+                            log('开始健康打卡...');
                             await doPunchIn()
                             await $.wait(2 * 1000);
 
@@ -100,8 +100,7 @@ let status_code = 0;
                 }
 
                 var resultlog = getResult()
-
-                msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n`
+                msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
 
             }
 
@@ -127,7 +126,7 @@ function checkJwsession() {
             login()
             return
         }
-        console.log("找到cache文件，正在使用jwsession晚签")
+        console.log("找到cache文件，正在使用jwsession打卡...")
         var read = fs.readFileSync('.cache/' + username + ".json")
         jwsession = read.toString()
         loginBack = 1
@@ -172,7 +171,7 @@ function login(timeout = 3 * 1000) {
                         log(`登录成功`)
 
                     } else {
-                        log(`登录失败，${result.message}`)
+                        log(`❌ 登录失败，${result.message}`)
                         status_code = 5;
                         loginBack = 0;
                     }
@@ -195,7 +194,7 @@ function setJwsession(jwsession) {
     fs.mkdir('.cache',function(err){
         if (err) {
 
-            console.log("找到cache文件。");
+            console.log("找到cache文件");
         }
         else console.log("正在创建cache储存目录与文件...");
     });
@@ -229,13 +228,14 @@ function PunchIn(timeout = 3 * 1000) {
                 let result = data == "undefined" ? await login() : JSON.parse(data);
 
                 if (result.code == -10) {
-                    log('jwsession 无效，尝试账号密码登录')
+                    log('jwsession 无效，尝试账号密码登录...')
                     status_code = 4;
+                    PunchInBack = 0;
                     loginBack = 0;
                     await login()
                     await $.wait(2 * 1000);
                     if (loginBack > 0) {
-                        log('【重新获取打卡列表】');
+                        log('重新获取打卡列表...');
                         await PunchIn()
                         await $.wait(2 * 1000)
                         return
@@ -245,7 +245,7 @@ function PunchIn(timeout = 3 * 1000) {
                     log("获取成功，开始打卡")
                     PunchInBack = 1
                 }
-                else {
+                if (result.code != 0 && result.code != -10) {
                     log(`获取失败，原因：${error}`)
                     PunchInBack = 0
                 }
@@ -325,6 +325,9 @@ function doPunchIn(timeout = 3 * 1000) {
                     log("❌ 打卡失败，当前不在打卡时间段内")
                     status_code = 3
                 }
+                if (result.code != 0) {
+                    log("❌ 打卡失败，原因："+data)
+                }
 
             } catch (e) {
                 log(e)
@@ -381,7 +384,9 @@ async function SendMsg(msg) {
     if (Notify > 0) {
         if ($.isNode()) {
             var notify = require('./sendNotify');
-            await notify.sendNotify($.name, msg);
+            await notify.sendNotify($.name, msg+ `\n打卡时间：${new Date(
+                new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 +
+                8 * 60 * 60 * 1000).toLocaleString()}\n`);
         } else {
             $.msg(msg);
         }
@@ -470,7 +475,7 @@ function modify() {
 function getVersion(timeout = 3 * 1000) {
     return new Promise((resolve) => {
         let url = {
-            url: `https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/jkdk.js`,
+            url: `https://wget.sanling.ml/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/jkdk.js`,
         }
         $.get(url, async (err, resp, data) => {
             try {
