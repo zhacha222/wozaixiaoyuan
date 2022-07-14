@@ -285,7 +285,7 @@ function PunchIn(timeout = 3 * 1000) {
                             if (!seq){
                                 log("❌ 打卡失败，当前不在打卡时间段内")
                                 PunchInBack = 0;
-                                status_code = 5;
+                                status_code = 3;
                                 return
                             }
                             if (seq > 0){
