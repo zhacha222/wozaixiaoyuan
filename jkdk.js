@@ -1,7 +1,7 @@
 /**
  作者QQ:1483081359
  日期：7-14
- 微信小程序：我在校园 健康打卡
+ 微信小程序：我在校园 健康打卡 1.0.0版本
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
 
  变量格式：export wzxy_jkdk='{
