@@ -13,7 +13,7 @@
             "jkdk_answers": ["0","无","1","0","36.2","没有","1","1","2"],
             "mark": "打卡用户"
             }'
- 
+
  多用户用`@`隔开
 
 
@@ -74,7 +74,7 @@ let status_code = 0;
                 username = content.username
                 password = content.password
                 location = content.jkdk_location
-                answers = JSON.stringify(content.answers)
+                answers = JSON.stringify(content.jkdk_answers)
                 mark = content.mark
                 log(`打卡用户：${mark}`)
                 loginBack = 0;//置0，防止上一个号影响下一个号
@@ -375,7 +375,7 @@ async function Envs() {
             wzxyArr.push(wzxy);
         }
     } else {
-        log(`\n 【${$.name}】：未填写变量 wzxy`)
+        log(`\n 未填写变量 wzxy`)
         return;
     }
 
