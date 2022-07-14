@@ -1,22 +1,23 @@
-
 /**
  作者QQ:1483081359
  日期：7-14
  微信小程序：我在校园 日检日报
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
 
- 变量格式：export wzxy_rjrb='{
+ 变量格式：export wzxy='{
             "username": "手机号",
             "password": "密码",
-            "location":"118.911429,64.376742",
-            "answers"=["0","0"],
+            "rjrb_location": "118.911429,64.376742",
+            "rjrb_answers": ["0","0"],
+            "jkdk_location": "118.911429,64.376742",
+            "jkdk_answers": ["0","无","1","0","36.2","没有","1","1","2"],
             "mark": "打卡用户"
             }'
+ 多用户用`@`隔开
 
-
- cron: 3 8,16 * * *
+ cron: 1 8,16 * * *
  */
-//cron: 3 8,16 * * *
+//cron: 1 8,16 * * *
 const $ = new Env('日检日报');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const fs = require("fs");
@@ -28,8 +29,8 @@ let scriptVersion = "1.0.0";
 let scriptVersionLatest = '';
 
 //我在校园账号数据
-let wzxy_rjrb = ($.isNode() ? process.env.wzxy_rjrb : $.getdata("wzxy_rjrb")) || "";
-let wzxy_rjrbArr = [];
+let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
+let wzxyArr = [];
 let loginBack = 0;
 let PunchInBack = 0;
 let requestAddressBack = 0;
@@ -59,21 +60,21 @@ let seq = '';
             await poem();
             await getVersion();
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
-            log(`\n=================== 共找到 ${wzxy_rjrbArr.length} 个账号 ===================`)
+            log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
 
 
-            for (let index = 0; index < wzxy_rjrbArr.length; index++) {
+            for (let index = 0; index < wzxyArr.length; index++) {
 
 
                 let num = index + 1
                 log(`\n========= 开始【第 ${num} 个账号】=========\n`)
 
-                data = wzxy_rjrbArr[index];
+                data = wzxyArr[index];
                 content = JSON.parse(data)
                 username = content.username
                 password = content.password
-                location = content.location
-                answers = JSON.stringify(content.answers)
+                location = content.rjrb_location
+                answers = JSON.stringify(content.rjrb_answers)
                 mark = content.mark
                 log(`打卡用户：${mark}`)
                 loginBack = 0;//置0，防止上一个号影响下一个号
@@ -379,22 +380,22 @@ function getResult(timeout = 3 * 1000) {
 
 // ============================================变量检查============================================ \\
 async function Envs() {
-    if (wzxy_rjrb) {
-        if (wzxy_rjrb.indexOf("@") != -1 || wzxy_rjrb.indexOf("&") != -1) {
-            wzxy_rjrb.split("@"&&"&").forEach((item) => {
-                wzxy_rjrbArr.push(item);
+    if (wzxy) {
+        if (wzxy.indexOf("@") != -1 || wzxy.indexOf("&") != -1) {
+            wzxy.split("@"&&"&").forEach((item) => {
+                wzxyArr.push(item);
             });
         }
-            // else if (wzxy_rjrb.indexOf("\n") != -1) {
-            //     wzxy_rjrb.split("\n").forEach((item) => {
-            //         wzxy_rjrbArr.push(item);
+            // else if (wzxy.indexOf("\n") != -1) {
+            //     wzxy.split("\n").forEach((item) => {
+            //         wzxyArr.push(item);
             //     });
         // }
         else {
-            wzxy_rjrbArr.push(wzxy_rjrb);
+            wzxyArr.push(wzxy);
         }
     } else {
-        log(`\n 【${$.name}】：未填写变量 wzxy_rjrb`)
+        log(`\n 【${$.name}】：未填写变量 wzxy`)
         return;
     }
 
@@ -519,7 +520,7 @@ function modify() {
 function getVersion(timeout = 3 * 1000) {
     return new Promise((resolve) => {
         let url = {
-            url: `https://git.zhacha.eu.org/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/rjrb.js`,
+            url: `https://wget.sanling.ml/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/rjrb.js`,
         }
         $.get(url, async (err, resp, data) => {
             try {
