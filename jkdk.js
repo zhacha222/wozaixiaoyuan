@@ -1,21 +1,25 @@
 /**
  作者QQ:1483081359
  日期：7-14
- 微信小程序：我在校园 健康打卡 1.0.0版本
+ 微信小程序：我在校园 健康打卡
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
 
- 变量格式：export wzxy_jkdk='{
+ 变量格式：export wzxy='{
             "username": "手机号",
             "password": "密码",
-            "location":"118.911429,64.376742",
-            "answers"=["0","0","1","0","36.2","没有","1","1","2"],
+            "rjrb_location":"118.911429,64.376742",
+            "rjrb_answers"=["0","0"],
+            "jkdk_location":"118.911429,64.376742",
+            "jkdk_answers"=["0","无","1","0","36.2","没有","1","1","2"],
             "mark": "打卡用户"
             }'
+ 多用户用`@`隔开
 
 
- cron: 3 8 * * *
+cron: 1 8 * * *
+
  */
-//cron: 3 0,10 * * *
+//cron: 1 8 * * *
 const $ = new Env('健康打卡');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const fs = require("fs");
@@ -27,8 +31,8 @@ let scriptVersion = "1.0.0";
 let scriptVersionLatest = '';
 
 //我在校园账号数据
-let wzxy_jkdk = ($.isNode() ? process.env.wzxy_jkdk : $.getdata("wzxy_jkdk")) || "";
-let wzxy_jkdkArr = [];
+let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
+let wzxyArr = [];
 let loginBack = 0;
 let PunchInBack = 0;
 let requestAddressBack = 0;
@@ -55,20 +59,20 @@ let status_code = 0;
             await poem();
              await getVersion();
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
-            log(`\n=================== 共找到 ${wzxy_jkdkArr.length} 个账号 ===================`)
+            log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
 
 
-            for (let index = 0; index < wzxy_jkdkArr.length; index++) {
+            for (let index = 0; index < wzxyArr.length; index++) {
 
 
                 let num = index + 1
                 log(`\n========= 开始【第 ${num} 个账号】=========\n`)
 
-                data = wzxy_jkdkArr[index];
+                data = wzxyArr[index];
                 content = JSON.parse(data)
                 username = content.username
                 password = content.password
-                location = content.location
+                location = content.jkdk_location
                 answers = JSON.stringify(content.answers)
                 mark = content.mark
                 log(`打卡用户：${mark}`)
@@ -355,22 +359,22 @@ function getResult(timeout = 3 * 1000) {
 
 // ============================================变量检查============================================ \\
 async function Envs() {
-    if (wzxy_jkdk) {
-        if (wzxy_jkdk.indexOf("@") != -1 || wzxy_jkdk.indexOf("&") != -1) {
-            wzxy_jkdk.split("@"&&"&").forEach((item) => {
-                wzxy_jkdkArr.push(item);
+    if (wzxy) {
+        if (wzxy.indexOf("@") != -1 || wzxy.indexOf("&") != -1) {
+            wzxy.split("@"&&"&").forEach((item) => {
+                wzxyArr.push(item);
             });
         }
-            // else if (wzxy_jkdk.indexOf("\n") != -1) {
-            //     wzxy_jkdk.split("\n").forEach((item) => {
-            //         wzxy_jkdkArr.push(item);
+            // else if (wzxy.indexOf("\n") != -1) {
+            //     wzxy.split("\n").forEach((item) => {
+            //         wzxyArr.push(item);
             //     });
         // }
         else {
-            wzxy_jkdkArr.push(wzxy_jkdk);
+            wzxyArr.push(wzxy);
         }
     } else {
-        log(`\n 【${$.name}】：未填写变量 wzxy_jkdk`)
+        log(`\n 【${$.name}】：未填写变量 wzxy`)
         return;
     }
 
