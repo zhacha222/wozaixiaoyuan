@@ -34,10 +34,10 @@
 
  mark —— 用户昵称（不一定要真名，随便填都行,便于自己区分）
 
-cron: 1 8 * * *
+cron: 3 0 * * *
 
  */
-//cron: 1 8 * * *
+//cron: 3 0 * * *
 const $ = new Env('健康打卡');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const fs = require("fs");
@@ -247,7 +247,7 @@ function PunchIn(timeout = 3 * 1000) {
 
         $.post(url, async (error, response, data) => {
             try {
-                let result = data == "undefined" ? await login() : JSON.parse(data);
+                let result = JSON.parse(data);
 
                 if (result.code == -10) {
                     log('jwsession 无效，尝试账号密码登录...')
@@ -293,7 +293,7 @@ function requestAddress(timeout = 3 * 1000) {
 
         $.post(url, async (error, response, data) => {
             try {
-                let result = data == "undefined" ? await login() : JSON.parse(data);
+                let result = JSON.parse(data);
 
                     if (result.status == 1) {
                         log(`地址信息获取成功`);
@@ -336,7 +336,7 @@ function doPunchIn(timeout = 3 * 1000) {
 
         $.post(url, async (error, response, data) => {
             try {
-                let result = data == "undefined" ? await login() : JSON.parse(data);
+                let result = JSON.parse(data);
 
                 //打卡情况
                 if (result.code == 0){
