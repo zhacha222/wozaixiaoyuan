@@ -28,7 +28,7 @@ const request = require('request');
 const {log} = console;
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
 //////////////////////
-let scriptVersion = "1.0.0";
+let scriptVersion = "1.0.1";
 let scriptVersionLatest = '';
 
 //我在校园账号数据
