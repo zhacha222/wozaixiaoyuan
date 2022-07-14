@@ -58,6 +58,7 @@ let passwordchangeBack = 0;
 let msg = '';
 let jwsession = '';
 let status_code = 0;
+let status_code1 = 0;
 
 
 !(async () => {
