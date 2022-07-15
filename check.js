@@ -33,23 +33,39 @@
      jkdk_location —— 健康打卡 的 经纬度（jkdk.js）
 
      mark —— 用户昵称（不一定要真名，随便填都行,便于自己区分）
-     
-  工作日志：
-  7.14 账号检测 重置密码 更新jwsession
+
+
+ 工作日志：
+ 7.14 1.0.0 账号检测 重置密码 更新jwsession
+ 7.15 1.0.1 增加失效自动禁用 增加仅账号失效通知
 
  */
 
 //cron: 0 */3 * * *
 const $ = new Env('账号检测');
-const notify = $.isNode() ? require('./sendNotify') : '';
-const fs = require("fs");
-const request = require('request');
-const {log} = console;
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
-//////////////////////
-let scriptVersion = "1.0.0";
-let scriptVersionLatest = '';
+const errorNotify = 0; //0为关闭仅账号失效通知，1为打开仅账号失效通知,默认为0
 
+////////////////////////////////////////////
+const got = require('got');
+require('dotenv').config();
+const path = require('path');
+const fs = require("fs");
+const {log} = console;
+const qlDir = '/ql';
+const notify = $.isNode() ? require('./sendNotify') : '';
+const authFile = path.join(qlDir, 'config/auth.json');
+const { readFile } = require('fs/promises');
+const request = require('request');
+const api = got.extend({
+    prefixUrl: 'http://127.0.0.1:5600',
+    retry: { limit: 0 },
+});
+
+
+//////////////////////
+let scriptVersion = "1.0.1";
+let scriptVersionLatest = '';
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -59,13 +75,14 @@ let msg = '';
 let jwsession = '';
 let status_code = 0;
 let status_code1 = 0;
+let eid = '';
 
 
 !(async () => {
     if (typeof $request !== "undefined") {
         await GetRewrite();
     } else {
-        if (!(await Envs()))
+        if (!(await getEnvs()))
             return;
         else {
 
@@ -77,6 +94,7 @@ let status_code1 = 0;
             await getVersion();
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
             log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
+            //log(wzxyArr[0])
 
 
             for (let index = 0; index < wzxyArr.length; index++) {
@@ -85,12 +103,20 @@ let status_code1 = 0;
                 let num = index + 1
                 log(`\n========= 开始检测【第 ${num} 个账号】=========\n`)
 
-                data = wzxyArr[index];
-                content = JSON.parse(data)
-                username = content.username
-                password = content.password
-                mark = content.mark
+                 eid = wzxyArr[index]._id
+                 status = wzxyArr[index].status
+                 data = JSON.parse(wzxyArr[index].value)
+                 //log(data)
+                 username = data.username
+                 password = data.password
+                 mark = data.mark
+
                 log(`检测用户： ${mark}`)
+                if (status == 1) {
+                    log(`🚫 账号已禁用`)
+                    status_code = 3
+                    status_code1 = 3
+                }else{
                 checkBack = 0;//置0，防止上一个号影响下一个号
                 await check()
                 await $.wait(2 * 1000);
@@ -100,17 +126,24 @@ let status_code1 = 0;
                     await $.wait(2 * 1000);
 
                     if (passwordchangeBack > 0) {
-                        log(`正在尝试更新jwsession...`)
+                        log(`正在更新jwsession...`)
                         await login()
                         await $.wait(2 * 1000);
 
                     }
 
                 }
-
+                }
                 var resultlog = getResult()
                 var updatelog = getupdateResult()
-                msg += `检测用户：${mark}\n${resultlog}\n${updatelog}\n\n`
+
+                if (errorNotify>0){
+                    if (status_code != 1  || status_code1 !=1){
+                        msg += `检测用户：${mark}\n${resultlog}\n${updatelog}\n\n`
+                    }
+                }else {
+                    msg += `检测用户：${mark}\n${resultlog}\n${updatelog}\n\n`
+                }
 
             }
 
@@ -180,16 +213,19 @@ function checkJwsession() {
 
     fs.open('.cache/' + username + ".json", 'r+', function(err, fd) {
         if (err) {
-            console.error("jwsession不存在")
+            console.error("jwsession不存在,开始禁用账号...")
+            DisableCk(eid)
             return
         }
         var read = fs.readFileSync('.cache/' + username + ".json")
         jwsession = read.toString()
         if (jwsession == ``){
-            console.log("jwsession不存在")
+            console.log("jwsession不存在,开始禁用账号..." +
+                "")
+            DisableCk(eid)
             return
         }else{
-        log(`找到jwsession，正在尝试重置密码...`)
+        log(`找到jwsession，正在重置密码...`)
         checkBack = 1
         }
     });
@@ -224,12 +260,15 @@ function passwordchange(timeout = 3 * 1000) {
                 let result = JSON.parse(data);
 
                 if (result.code == 0 ) {
-                    log(`密码重置成功`)
+                    log(`✅ 密码重置成功`)
                     status_code1 = 1
                     passwordchangeBack = 1
                 }else{
-                    log(`❌ jwsession已失效`)
+                    log(`❌ jwsession已失效，开始禁用账号...`)
+                    DisableCk(eid)
                     status_code1 = 2
+                    passwordchangeBack = 0
+
                  }
 
             } catch (e) {
@@ -294,7 +333,8 @@ function getResult(timeout = 3 * 1000) {
     res = status_code
     if (res == 1) return "✅ 账号未失效"
     if (res == 2) return "❌ 账号已失效"
-    else return "❌ 打卡失败，发生未知错误"
+    if (res == 3) return "🚫 账号已被禁用，请及时更新"
+    else return "❌ 发生未知错误"
 }
 
 
@@ -305,7 +345,9 @@ function getupdateResult(timeout = 3 * 1000) {
     res1 = status_code1
     if (res1 == 1) return "✅ 账号更新成功"
     if (res1 == 2) return "❌ 账号更新失败,请手动更改密码后重新登录"
-    else return "❌ 打卡失败，发生未知错误"
+    if (res1 == 3) return ""
+    if (res1 == 4) return "🚫 账号禁用成功"
+    else return "❌ 发生未知错误"
 }
 
 
@@ -326,34 +368,65 @@ function setJwsession(jwsession) {
         if (err) {
             return console.error(err);
         }
-        console.log("jwsession成功更新");
+        console.log("✅ jwsession成功更新");
+
     })
 
 }
 
 // ============================================变量检查============================================ \\
-async function Envs() {
-    if (wzxy) {
-        if (wzxy.indexOf("@") != -1 || wzxy.indexOf("&") != -1) {
-            wzxy.split("@"&&"&").forEach((item) => {
-                wzxyArr.push(item);
-            });
+
+async function getToken() {
+    const authConfig = JSON.parse(await readFile(authFile));
+    //console.log(authConfig)
+    return authConfig.token;
+}
+
+
+async function getEnvs() {
+    const token = await getToken();
+    const body = await api({
+        url: 'api/envs',
+        searchParams: {
+            searchValue: 'wzxy',
+            t: Date.now(),
+        },
+        headers: {
+            Accept: 'application/json',
+            authorization: `Bearer ${token}`,
+        },
+    }).json();
+    for(var i=0,j=0;i<body.data.length;i++){
+
+        if(body.data[i].name==`wzxy`){
+            wzxyArr[j]=body.data[i]
+            j++
         }
-            // else if (wzxy.indexOf("\n") != -1) {
-            //     wzxy.split("\n").forEach((item) => {
-            //         wzxyArr.push(item);
-            //     });
-        // }
-        else {
-            wzxyArr.push(wzxy);
-        }
-    } else {
-        log(`\n 未填写变量 wzxy`)
-        return;
+    }
+    return wzxyArr;
+
+}
+
+async function DisableCk(eid) {
+    const token = await getToken();
+    const body = await api({
+        method: 'put',
+        url: 'api/envs/disable',
+        params: { t: Date.now() },
+        body: JSON.stringify([eid]),
+        headers: {
+            Accept: 'application/json',
+            authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json;charset=UTF-8',
+        },
+    }).json();
+    if (body.code == 200){
+       log(`🚫 账号禁用成功`)
+        status_code1 = 4
     }
 
-    return true;
-}
+};
+
 // ============================================发送消息============================================ \\
 async function SendMsg(msg) {
     if (!msg)
