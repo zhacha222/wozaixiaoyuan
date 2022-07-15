@@ -1,6 +1,5 @@
 /**
  作者QQ:1483081359
- 日期：7-14
  微信小程序：我在校园 账号检测
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
 
