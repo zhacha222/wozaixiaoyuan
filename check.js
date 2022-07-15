@@ -40,7 +40,7 @@
 
  */
 
-//cron: 0 */3 * * *
+//cron: 15 */6 * * *
 const $ = new Env('账号检测');
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
 const errorNotify = 0; //0为关闭仅账号失效通知，1为打开仅账号失效通知,默认为0
