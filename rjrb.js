@@ -1,6 +1,5 @@
 /**
  作者QQ:1483081359
- 日期：7-14
  微信小程序：我在校园 日检日报
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
 
@@ -33,7 +32,9 @@
  jkdk_location —— 健康打卡 的 经纬度（jkdk.js）
 
  mark —— 用户昵称（不一定要真名，随便填都行,便于自己区分）
-
+工作日志 ：
+ 7.14 发布1.0.0版本
+ 7.15 修复seq识别出错的bug
 
  cron: 3 8,16 * * *
  */
@@ -45,7 +46,7 @@ const request = require('request');
 const {log} = console;
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
 //////////////////////
-let scriptVersion = "1.0.0";
+let scriptVersion = "1.0.1";
 let scriptVersionLatest = '';
 
 //我在校园账号数据
@@ -278,7 +279,10 @@ function PunchIn(timeout = 3 * 1000) {
 
                                 if(startTime < now && now < endTime){
 
-                                seq = result['data'][i]['seq']
+                                    seq = result['data'][i]['seq']
+                                    if(!seq) {
+                                        seq = result['data'][i].seq
+                                    }
 
                                 }
                         }
