@@ -102,11 +102,11 @@ let eid = '';
 
 
                 let num = index + 1
-                log(`\n========= 开始检测【第 ${num} 个账号】=========\n`)
                 if (num >1){
                     log('**********休息15s，防止黑IP**********');
                     await $.wait(16 * 1000);
                 }
+                log(`\n========= 开始检测【第 ${num} 个账号】=========\n`)
                  eid = wzxyArr[index]._id
                  status = wzxyArr[index].status
                  data = JSON.parse(wzxyArr[index].value)
