@@ -40,6 +40,7 @@
  1.0.0 完成日检日报的基本功能
  1.0.1 修复seq识别出错的bug
  1.0.2 增加等待15s,防止黑ip
+ 1.0.3 修复打卡通知成功但 实际上没打上卡的bug
 
  */
 
@@ -52,7 +53,7 @@ const request = require('request');
 const {log} = console;
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
 //////////////////////
-let scriptVersion = "1.0.2";
+let scriptVersion = "1.0.3";
 let scriptVersionLatest = '';
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
@@ -91,10 +92,11 @@ let seq = '';
 
             for (let index = 0; index < wzxyArr.length; index++) {
 
+
                 let num = index + 1
                 if (num >1){
-                log('**********休息15s，防止黑IP**********');
-                  await $.wait(16 * 1000);
+                    log('**********休息15s，防止黑IP**********');
+                    await $.wait(16 * 1000);
                 }
                 log(`\n========= 开始【第 ${num} 个账号】=========\n`)
                 data = wzxyArr[index];
@@ -338,7 +340,7 @@ function requestAddress(timeout = 3 * 1000) {
                     timestampMs()
                     _res = result.regeocode.addressComponent
                     location = location.split(',')
-                    _data =`answers=${answers}&seq=${seq}&temperature=36.0&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${_res.city}&district=${_res.district}&province=${_res.province}&township=${_res.township}&street=${_res.streetNumber.street}&areacode=${_res.adcode}&towncode="0"&citycode="0"&timestampHeader=${new Date().getTime()}`
+                    _data =`answers=${answers}&seq=${seq}&temperature=36.0&userId=&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${_res.city}&district=${_res.district}&province=${_res.province}&township=${_res.township}&street=${_res.streetNumber.street}&myArea=&areacode=${_res.adcode}&towncode=0&citycode=0&timestampHeader=${new Date().getTime()}`
                     sign_data = encodeURI(_data)
                     requestAddressBack = 1
 
@@ -364,10 +366,17 @@ function requestAddress(timeout = 3 * 1000) {
 function doPunchIn(timeout = 3 * 1000) {
     return new Promise((resolve) => {
         let url = {
-            url: "https://student.wozaixiaoyuan.com/health/save.json",
+            url: "https://student.wozaixiaoyuan.com/heat/save.json",
             headers: {
-                'jwsession': jwsession,
-            },
+                "Host": "student.wozaixiaoyuan.com",
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Connection": "keep-alive",
+                "User-Agent": "Mozilla/5.0 (iPad; CPU OS 15_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.23(0x1800172f) NetType/WIFI Language/zh_CN miniProgram/wxce6d08f781975d91",
+                "Referer": "https://servicewechat.com/wxce6d08f781975d91/183/page-frame.html",
+                "Content-Length": "360",
+                "JWSESSION": jwsession,
+                 },
             body: sign_data,
 
         }
