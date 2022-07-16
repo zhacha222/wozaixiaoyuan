@@ -93,7 +93,10 @@ let status_code = 0;
 
                 let num = index + 1
                 log(`\n========= 开始【第 ${num} 个账号】=========\n`)
-
+                if (num >1){
+                    log('**********休息15s，防止黑IP**********');
+                    await $.wait(16 * 1000);
+                }
                 data = wzxyArr[index];
                 content = JSON.parse(data)
                 username = content.username
@@ -131,8 +134,6 @@ let status_code = 0;
 
                 var resultlog = getResult()
                 msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
-                log('*********休息15s，防止黑IP~*********');
-                await $.wait(16 * 1000);
 
             }
 
@@ -178,7 +179,7 @@ function login(timeout = 3 * 1000) {
             headers: {
                 "Accept-Encoding": "gzip, deflate, br",
                 "Connection": "keep-alive",
-                "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 MicroMessenger/7.0.9.501 NetType/WIFI MiniProgramEnv/Windows WindowsWechat",
+                "User-Agent": "Mozilla/5.0 (iPad; CPU OS 15_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.23(0x1800172f) NetType/WIFI Language/zh_CN miniProgram/wxce6d08f781975d91",
                 "content-type": "application/json;charset=UTF-8",
                 "Content-Length": "2",
                 "Host": "gw.wozaixiaoyuan.com",
