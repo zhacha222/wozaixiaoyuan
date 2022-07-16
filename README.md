@@ -1,12 +1,14 @@
 # 我在校园 青龙面板
 
+本人QQ1483081359，欢迎前来提交bug
+
 ## 一些前提：
 
 1.只支持青龙面板
 
 2.本库脚本通用 `wzxy`这一个变量
 
-3.脚本变量只推荐在青龙的【环境变量】页添加，有强迫症在config.sh中添加的如果出现问题自己解决
+3.脚本变量只推荐在青龙的【环境变量】页添加，有强迫症在`config.sh`中添加的如果出现问题自己解决
 
 4.脚本通知方式采用`青龙面板默认通知`，请自行配置
 
@@ -16,7 +18,7 @@
 
 **参考文档：http://note.youdao.com/s/HMiudGkb**
 
-<img src="https://www.zc4g.cn/wp-content/uploads/2022/03/2022/07/fcec9e7541a7.jpg" width="900px" height="300px" alt="daka" align=center>
+<img src="https://cdn.jsdelivr.net/gh/zhacha222/wozaixiaoyuan@e149d21fd4ae3e8cfef8654708c2fbe6fb54a17f/jpg/A97F963D4799767B81EDDD73A763BF19.jpg" width="270px" height="600px" alt="daka" align=center>
 
 
 ## 拉库：
