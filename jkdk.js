@@ -1,43 +1,51 @@
 /**
- 作者QQ:1483081359
+ 作者QQ:1483081359 欢迎前来提交bug
  日期：7-14
  微信小程序：我在校园 健康打卡
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
 
  变量名称：wzxy
- 变量值：   {
-            "username": "手机号",
-            "password": "密码",
-            "qd_location": "118.911429,64.376742",
-            "rjrb_answers": ["0","0"],
-            "rjrb_location": "118.911429,64.376742",
-            "jkdk_answers": ["0","无","1","0","36.2","没有","1","1","2"],
-            "jkdk_location": "118.911429,64.376742",
-            "mark": "用户昵称"
-            }
+ 变量值：  {
+        "username": "手机号",
+        "password": "密码",
+        "qd_location": "133.333333,33.333333",
+        "rjrb_answers": ["0","0"],
+        "rjrb_location": "133.333333,33.333333",
+        "jkdk_answers": ["0","无","1","0","36.2","没有","1","1","2"],
+        "jkdk_location": "133.333333,33.333333",
+        "mark": "用户昵称"
+        }
 
 
- **将变量填入【环境变量】之中去！！！
- 不要填在【配置文件】！不要填在【配置文件】！不要填在【配置文件】！填配置文件里会报错！
+ ***一些前提说明：
+ 1.只支持青龙面板
+ 2.本库脚本通用 `wzxy`这一个变量
+ 3.脚本变量只推荐在青龙的【环境变量】页添加，有强迫症在config.sh中添加的如果出现问题自己解决
+ 4.脚本通知方式采用青龙面板默认通知，请自行配置。
 
- 关于变量值中各值的解释:
+ ***关于变量值中各参数的解释:
  username —— 手机号
  password —— 密码
 
- qd_location —— 签到 的经纬度（qd.js)
+ qd_location —— 签到 的经纬度（qd原始版 .js)
 
- rjrb_answers —— 日检日报 的 填空内容（rjrb.js）
- rjrb_location —— 日检日报 的 经纬度（rjrb.js）
+ rjrb_answers —— 日检日报的 填空参数（rjrb.js）
+ rjrb_location —— 日检日报的 经纬度（rjrb.js）
 
- jkdk_answers —— 健康打卡 的 填空内容（jkdk.js）
- jkdk_location —— 健康打卡 的 经纬度（jkdk.js）
+ jkdk_answers —— 健康签到的 填空参数（jkdk.js）
+ jkdk_location —— 健康签到的 经纬度（jkdk.js）
 
- mark —— 用户昵称（不一定要真名，随便填都行,便于自己区分）
+ mark —— 用户昵称（不一定要真名，随便填都行,便于自己区分打卡用户）
 
-cron: 3 0 * * *
+ ***工作日志：
+ 1.0.0 完成健康打卡的基本功能
+ 1.0.1 增加等待15s,防止黑ip
+
 
  */
-//cron: 3 0 * * *
+
+
+//cron: 5 0 * * *
 const $ = new Env('健康打卡');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const fs = require("fs");
@@ -45,7 +53,7 @@ const request = require('request');
 const {log} = console;
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
 //////////////////////
-let scriptVersion = "1.0.0";
+let scriptVersion = "1.0.1";
 let scriptVersionLatest = '';
 
 //我在校园账号数据
@@ -75,7 +83,7 @@ let status_code = 0;
                 8 * 60 * 60 * 1000).toLocaleString()} \n=============================================\n`);
 
             await poem();
-             await getVersion();
+            await getVersion();
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
             log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
 
@@ -123,6 +131,8 @@ let status_code = 0;
 
                 var resultlog = getResult()
                 msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
+                log('*********休息15s，防止黑IP~*********');
+                await $.wait(16 * 1000);
 
             }
 
@@ -183,20 +193,20 @@ function login(timeout = 3 * 1000) {
             try {
                 let result = data == "undefined" ? await login() : JSON.parse(data);
 
-                    //登录成功
-                    if (result.code == 0 ) {
+                //登录成功
+                if (result.code == 0 ) {
 
-                        jwsession = response.headers['jwsession']
-                        //储存jwsession
-                        setJwsession(jwsession)
-                        loginBack = 1;
-                        log(`登录成功`)
+                    jwsession = response.headers['jwsession']
+                    //储存jwsession
+                    setJwsession(jwsession)
+                    loginBack = 1;
+                    log(`登录成功`)
 
-                    } else {
-                        log(`❌ 登录失败，${result.message}`)
-                        status_code = 5;
-                        loginBack = 0;
-                    }
+                } else {
+                    log(`❌ 登录失败，${result.message}`)
+                    status_code = 5;
+                    loginBack = 0;
+                }
 
             } catch (e) {
                 log(e)
@@ -247,7 +257,7 @@ function PunchIn(timeout = 3 * 1000) {
 
         $.post(url, async (error, response, data) => {
             try {
-                let result = JSON.parse(data);
+                let result = data == "undefined" ? await PunchIn() : JSON.parse(data);
 
                 if (result.code == -10) {
                     log('jwsession 无效，尝试账号密码登录...')
@@ -293,21 +303,21 @@ function requestAddress(timeout = 3 * 1000) {
 
         $.post(url, async (error, response, data) => {
             try {
-                let result = JSON.parse(data);
+                let result = data == "undefined" ? await requestAddress() : JSON.parse(data);
 
-                    if (result.status == 1) {
-                        log(`地址信息获取成功`);
-                        timestampMs()
-                        _res = result.regeocode.addressComponent
-                        location = location.split(',')
-                        _data =`answers=${answers}&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${_res.city}&district=${_res.district}&province=${_res.province}&township=${_res.township}&street=${_res.streetNumber.street}&areacode=${_res.adcode}&towncode="0"&citycode="0"&timestampHeader=${new Date().getTime()}`
-                        sign_data = encodeURI(_data)
-                        requestAddressBack = 1
+                if (result.status == 1) {
+                    log(`地址信息获取成功`);
+                    timestampMs()
+                    _res = result.regeocode.addressComponent
+                    location = location.split(',')
+                    _data =`answers=${answers}&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${_res.city}&district=${_res.district}&province=${_res.province}&township=${_res.township}&street=${_res.streetNumber.street}&areacode=${_res.adcode}&towncode="0"&citycode="0"&timestampHeader=${new Date().getTime()}`
+                    sign_data = encodeURI(_data)
+                    requestAddressBack = 1
 
-                    } else {
-                        log(`地址信息获取失败`)
-                        requestAddressBack = 0
-                    }
+                } else {
+                    log(`地址信息获取失败`)
+                    requestAddressBack = 0
+                }
 
             } catch (e) {
                 log(e)
@@ -336,7 +346,7 @@ function doPunchIn(timeout = 3 * 1000) {
 
         $.post(url, async (error, response, data) => {
             try {
-                let result = JSON.parse(data);
+                let result = data == "undefined" ? await doPunchIn() : JSON.parse(data);
 
                 //打卡情况
                 if (result.code == 0){
