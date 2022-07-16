@@ -1,5 +1,5 @@
 /**
- 作者QQ:1483081359
+ 作者QQ:1483081359 欢迎前来提交bug
  微信小程序：我在校园 签到
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
 
@@ -7,38 +7,42 @@
  变量值：  {
         "username": "手机号",
         "password": "密码",
-        "qd_location": "118.911429,64.376742",
+        "qd_location": "133.333333,33.333333",
         "rjrb_answers": ["0","0"],
-        "rjrb_location": "118.911429,64.376742",
+        "rjrb_location": "133.333333,33.333333",
         "jkdk_answers": ["0","无","1","0","36.2","没有","1","1","2"],
-        "jkdk_location": "118.911429,64.376742",
+        "jkdk_location": "133.333333,33.333333",
         "mark": "用户昵称"
         }
 
 
- 将变量填入【环境变量】之中去！！！
- 不要填在【配置文件】！不要填在【配置文件】！不要填在【配置文件】！填配置文件里会报错！
+ ***一些前提说明：
+ 1.只支持青龙面板
+ 2.本库脚本通用 `wzxy`这一个变量
+ 3.脚本变量只推荐在青龙的【环境变量】页添加，有强迫症在config.sh中添加的如果出现问题自己解决
+ 4.脚本通知方式采用青龙面板默认通知，请自行配置。
 
- 关于变量值中各值的解释:
+ ***关于变量值中各参数的解释:
  username —— 手机号
  password —— 密码
 
  qd_location —— 签到 的经纬度（qd原始版 .js)
 
- rjrb_answers —— 日检日报 的 填空内容（rjrb.js）
- rjrb_location —— 日检日报 的 经纬度（rjrb.js）
+ rjrb_answers —— 日检日报的 填空参数（rjrb.js）
+ rjrb_location —— 日检日报的 经纬度（rjrb.js）
 
- jkdk_answers —— 健康签到 的 填空内容（jkdk.js）
- jkdk_location —— 健康签到 的 经纬度（jkdk.js）
+ jkdk_answers —— 健康签到的 填空参数（jkdk.js）
+ jkdk_location —— 健康签到的 经纬度（jkdk.js）
 
- mark —— 用户昵称（不一定要真名，随便填都行,便于自己区分）
+ mark —— 用户昵称（不一定要真名，随便填都行,便于自己区分打卡用户）
 
  工作日志：
- 1.0.0 发布1.0.0版本
+ 1.0.0 完成签到的基本功能
  1.0.1 增加等待15s,防止黑ip
 
- cron: 0
  */
+
+
 //cron: 0
 const $ = new Env('我在校园签到');
 const notify = $.isNode() ? require('./sendNotify') : '';
