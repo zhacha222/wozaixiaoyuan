@@ -90,11 +90,11 @@ let status_code = 0;
 
 
                 let num = index + 1
-                log(`\n========= 开始【第 ${num} 个账号】=========\n`)
                 if (num >1){
                     log('**********休息15s，防止黑IP**********');
                     await $.wait(16 * 1000);
                 }
+                log(`\n========= 开始【第 ${num} 个账号】=========\n`)
                 data = wzxyArr[index];
                 content = JSON.parse(data)
                 username = content.username
