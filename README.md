@@ -45,7 +45,7 @@ wzxy
  username —— 手机号
  password —— 密码
 
- qd_location —— 签到 的经纬度（qd原始版 .js)
+ qd_location —— 签到 的经纬度（qd.js)
 
  rjrb_answers —— 日检日报的 填空参数（rjrb.js）
  rjrb_location —— 日检日报的 经纬度（rjrb.js）
