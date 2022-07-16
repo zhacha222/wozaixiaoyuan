@@ -36,7 +36,7 @@
 
  cron: 0
  */
-
+let scriptVersion = "0.0.0";
 const $ = new Env('我在校园签到');
 console.log(`\n【我在校园签到】，别急呀，签到还没写完呐···`)
 
