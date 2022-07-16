@@ -1,6 +1,6 @@
 # 我在校园 青龙面板
 
-## 一些前提
+## 一些前提：
 
 1.只支持青龙面板
 
@@ -11,7 +11,15 @@
 4.脚本通知方式采用`青龙面板默认通知`，请自行配置
 
 
-## 拉库
+
+**本人目前用的是企业微信通知，具体教程有空再写吧，感兴趣的可以看一下下面这个参考文档**
+
+**参考文档：http://note.youdao.com/s/HMiudGkb**
+
+<img src="https://www.zc4g.cn/wp-content/uploads/2022/03/2022/07/fcec9e7541a7.jpg" width="900px" height="300px" alt="daka" align=center>
+
+
+## 拉库：
 
 ```
 ql repo https://github.com/zhacha222/wozaixiaoyuan.git "" "sendNotify" "sendNotify"
