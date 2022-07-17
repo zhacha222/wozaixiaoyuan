@@ -114,12 +114,12 @@ let locat = '';
                     checkBack = 1
                     status_code = 6
                 }
-                if (checkBack) {
+                if (checkBack > 0) {
                     log('开始检查jwsession是否存在...');
                     await checkJwsession()
                     await $.wait(2 * 1000);
 
-                if (loginBack) {
+                if (loginBack > 0) {
 
                     log('开始获取打卡列表...');
                     await PunchIn()
@@ -391,7 +391,7 @@ function getResult(timeout = 3 * 1000) {
     if (res == 3) return "❌ 打卡失败，当前不在打卡时间段内"
     if (res == 4) return "❌ 打卡失败，jwsession 无效"
     if (res == 5) return "❌ 打卡失败，登录错误，请检查账号信息"
-    if (res == 6) return "❌ 打卡失败，变量参数不完整" 
+    if (res == 6) return "❌ 打卡失败，变量参数不完整"
     else return "❌ 打卡失败，发生未知错误"
 }
 
