@@ -59,6 +59,7 @@ let scriptVersionLatest = '';
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
+let wait = 0;
 let checkBack = 0;
 let loginBack = 0;
 let PunchInBack = 0;
@@ -94,7 +95,7 @@ let locat = '';
 
 
                 let num = index + 1
-                if (num >1){
+                if (num >1 && wait != 0){
                     log('**********休息15s，防止黑IP**********');
                     await $.wait(16 * 1000);
                 }
@@ -113,6 +114,7 @@ let locat = '';
                     log('未填写jkdk_location，跳过打卡');
                     checkBack = 0
                     status_code = 6
+                    wait = 0
                 }
                 if (checkBack > 0) {
                     log('开始检查jwsession是否存在...');
