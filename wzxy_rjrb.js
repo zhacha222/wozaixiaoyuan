@@ -300,12 +300,12 @@ function PunchIn(timeout = 3 * 1000) {
                         endTime = result['data'][i]['endTime']
 
                         if(startTime < now && now < endTime){
-
-                            var seq = result['data'][i]['seq']
-                            if(!seq) {
-                                seq = result['data'][i].seq
-                            }
-
+                            
+                             seq = i + 1
+                            // var seq = result['data'][i]['seq']
+                            // if(!seq) {
+                            //     seq = result['data'][i].seq
+                            // }
                         }
                     }
                     if (!seq){
