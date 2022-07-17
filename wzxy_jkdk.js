@@ -40,7 +40,7 @@
  ***工作日志：
  1.0.0 完成健康打卡的基本功能
  1.0.1 增加等待15s,防止黑ip
-
+ 1.0.2 增加完整参数验证
 
  */
 
@@ -53,7 +53,7 @@ const request = require('request');
 const {log} = console;
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
 //////////////////////
-let scriptVersion = "1.0.1";
+let scriptVersion = "1.0.2";
 let scriptVersionLatest = '';
 
 //我在校园账号数据
@@ -68,6 +68,7 @@ let location = '';
 let sign_data = '';
 let answers = '';
 let status_code = 0;
+let locat = '';
 
 
 !(async () => {
@@ -106,6 +107,11 @@ let status_code = 0;
                 mark = content.mark
                 log(`打卡用户：${mark}`)
                 loginBack = 0;//置0，防止上一个号影响下一个号
+                locat = location.split(',')
+                if (!locat[0] || !locat[1]){
+                    log('未填写jkdk_location，跳过打卡');
+                    return
+                }
                 log('开始检查jwsession是否存在...');
                 await checkJwsession()
                 await $.wait(2 * 1000);
@@ -508,7 +514,7 @@ function modify() {
 function getVersion(timeout = 3 * 1000) {
     return new Promise((resolve) => {
         let url = {
-            url: `https://wget.sanling.ml/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/jkdk.js`,
+            url: `https://wget.sanling.ml/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/wzxy_jkdk.js`,
         }
         $.get(url, async (err, resp, data) => {
             try {
