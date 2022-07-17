@@ -40,6 +40,7 @@
  1.0.0 完成账号检测的基本功能：检测，重置密码，更新jwsession
  1.0.1 增加账号失效自动禁用 增加仅账号失效通知
  1.0.2 增加等待15s,防止黑ip
+ 
 
  */
 
@@ -529,7 +530,7 @@ function modify() {
 function getVersion(timeout = 3 * 1000) {
     return new Promise((resolve) => {
         let url = {
-            url: `https://wget.sanling.ml/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/check.js`,
+            url: `https://wget.sanling.ml/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/wzxy_check.js`,
         }
         $.get(url, async (err, resp, data) => {
             try {
