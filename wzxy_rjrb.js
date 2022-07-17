@@ -59,6 +59,8 @@ let scriptVersionLatest = '';
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
+let wait = 0;
+let checkBack = 0;
 let loginBack = 0;
 let PunchInBack = 0;
 let requestAddressBack = 0;
@@ -96,7 +98,7 @@ let locat = '';
 
 
                 let num = index + 1
-                if (num >1){
+                if (num >1 && wait == 0){
                     log('**********休息15s，防止黑IP**********');
                     await $.wait(16 * 1000);
                 }
@@ -109,38 +111,42 @@ let locat = '';
                 answers = JSON.stringify(content.rjrb_answers)
                 mark = content.mark
                 log(`打卡用户：${mark}`)
+                var checkBack = 0;
                 loginBack = 0;//置0，防止上一个号影响下一个号
                 locat = location.split(',')
                 if (!locat[0] || !locat[1]){
-                    log('未填写rjrb_location，跳过打卡');
-                    return
+                    log('未填写jkdk_location，跳过打卡');
+                    var checkBack = 1
+                    status_code = 6
+                    wait = 1
                 }
-                log('开始检查jwsession是否存在...');
-                await checkJwsession()
-                await $.wait(2 * 1000);
-
-                if (loginBack) {
-
-                    log('开始获取打卡列表...');
-                    await PunchIn()
+                if (checkBack == 0) {
+                    log('开始检查jwsession是否存在...');
+                    await checkJwsession()
                     await $.wait(2 * 1000);
 
-                    if (PunchInBack > 0) {
-                        log('正在请求地址信息...');
-                        await requestAddress()
+                    if (loginBack) {
+
+                        log('开始获取打卡列表...');
+                        await PunchIn()
                         await $.wait(2 * 1000);
 
-                        if (requestAddressBack) {
-                            log('开始日检日报打卡...');
-                            await doPunchIn()
+                        if (PunchInBack > 0) {
+                            log('正在请求地址信息...');
+                            await requestAddress()
                             await $.wait(2 * 1000);
+
+                            if (requestAddressBack) {
+                                log('开始日检日报打卡...');
+                                await doPunchIn()
+                                await $.wait(2 * 1000);
+
+                            }
 
                         }
 
                     }
-
                 }
-
                 var resultlog = getResult()
                 msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
 
@@ -421,6 +427,7 @@ function getResult(timeout = 3 * 1000) {
     if (res == 3) return "❌ 打卡失败，当前不在打卡时间段内"
     if (res == 4) return "❌ 打卡失败，jwsession 无效"
     if (res == 5) return "❌ 打卡失败，登录错误，请检查账号信息"
+    if (res == 6) return "❌ 打卡失败，变量参数不完整"
     else return "❌ 打卡失败，发生未知错误"
 }
 
