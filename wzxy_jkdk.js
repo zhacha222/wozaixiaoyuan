@@ -112,11 +112,11 @@ let locat = '';
                 locat = location.split(',')
                 if (!locat[0] || !locat[1]){
                     log('未填写jkdk_location，跳过打卡');
-                    checkBack = 0
+                    checkBack = 1
                     status_code = 6
                     wait = 0
                 }
-                if (checkBack > 0) {
+                if (checkBack == 0) {
                     log('开始检查jwsession是否存在...');
                     await checkJwsession()
                     await $.wait(2 * 1000);
