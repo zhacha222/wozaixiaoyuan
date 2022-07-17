@@ -41,6 +41,7 @@
  1.0.1 修复seq识别出错的bug
  1.0.2 增加等待15s,防止黑ip
  1.0.3 修复打卡通知成功但 实际上没打上卡的bug
+ 1.0.4 增加完整参数验证
 
  */
 
@@ -51,9 +52,9 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 const fs = require("fs");
 const request = require('request');
 const {log} = console;
-const Notify = 1; //0为关闭通知，1为打开通知,默认为1
+const Notify = 0; //0为关闭通知，1为打开通知,默认为1
 //////////////////////
-let scriptVersion = "1.0.3";
+let scriptVersion = "1.0.4";
 let scriptVersionLatest = '';
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
@@ -70,6 +71,7 @@ let status_code = 0;
 let startTime = '';
 let endTime = '';
 let seq = '';
+let locat = '';
 
 
 !(async () => {
@@ -108,6 +110,11 @@ let seq = '';
                 mark = content.mark
                 log(`打卡用户：${mark}`)
                 loginBack = 0;//置0，防止上一个号影响下一个号
+                locat = location.split(',')
+                if (!locat[0] || !locat[1]){
+                    log('未填写rjrb_location，跳过打卡');
+                    return
+                }
                 log('开始检查jwsession是否存在...');
                 await checkJwsession()
                 await $.wait(2 * 1000);
@@ -288,7 +295,7 @@ function PunchIn(timeout = 3 * 1000) {
 
                         if(startTime < now && now < endTime){
 
-                            seq = result['data'][i]['seq']
+                            var seq = result['data'][i]['seq']
                             if(!seq) {
                                 seq = result['data'][i].seq
                             }
@@ -376,7 +383,7 @@ function doPunchIn(timeout = 3 * 1000) {
                 "Referer": "https://servicewechat.com/wxce6d08f781975d91/183/page-frame.html",
                 "Content-Length": "360",
                 "JWSESSION": jwsession,
-                 },
+            },
             body: sign_data,
 
         }
@@ -560,7 +567,7 @@ function modify() {
 function getVersion(timeout = 3 * 1000) {
     return new Promise((resolve) => {
         let url = {
-            url: `https://wget.sanling.ml/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/rjrb.js`,
+            url: `https://wget.sanling.ml/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/wzxy_rjrb.js`,
         }
         $.get(url, async (err, resp, data) => {
             try {
