@@ -16,7 +16,7 @@
 ## 拉库：
 
 ```
-ql repo https://github.com/zhacha222/wozaixiaoyuan.git  "" "wzxy|sendNotify" "sendNotify"
+ql repo https://github.com/zhacha222/wozaixiaoyuan.git  "wzxy_" "sendNotify" "sendNotify"
 ```
 
 ## 环境变量：
