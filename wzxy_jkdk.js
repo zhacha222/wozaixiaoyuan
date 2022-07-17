@@ -111,7 +111,7 @@ let locat = '';
                 locat = location.split(',')
                 if (!locat[0] || !locat[1]){
                     log('未填写jkdk_location，跳过打卡');
-                    checkBack = 1
+                    checkBack = 0
                     status_code = 6
                 }
                 if (checkBack > 0) {
