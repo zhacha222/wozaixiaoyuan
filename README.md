@@ -59,8 +59,22 @@ wzxy
 
 ## 通知方式：
 
-**本人目前用的是企业微信通知，具体教程有空再写吧，感兴趣的可以看一下下面这个参考文档**
+**在下面随便选一个自己喜欢的推送方式**
 
-**参考文档：http://note.youdao.com/s/HMiudGkb**
+* Server酱  https://sct.ftqq.com
+* BARK 
+* Telegram 
+* 钉钉  https://developers.dingtalk.com/document/app/custom-robot-access
+* 企业微信机器人  https://work.weixin.qq.com/api/doc/90000/90136/91770
+* 企业微信应用  http://note.youdao.com/s/HMiudGkb
+* iGot聚合  https://wahao.github.io/Bark-MP-helper
+* Push Plus  http://www.pushplus.plus
+* go-cqhttp 
+* gotify
+
+
+**由于本人目前用的是企业微信通知，只写了这一个教程，其他通知的教程有空再写吧**
+
+**企业微信应用通知教程：https://www.zc4g.cn/658.html**
 
 <img src="https://cdn.jsdelivr.net/gh/zhacha222/wozaixiaoyuan@e149d21fd4ae3e8cfef8654708c2fbe6fb54a17f/jpg/A97F963D4799767B81EDDD73A763BF19.jpg" width="270px" height="600px" alt="daka" align=center>
