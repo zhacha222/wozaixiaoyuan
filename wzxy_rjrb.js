@@ -118,7 +118,7 @@ let locat = '';
                 loginBack = 0;//置0，防止上一个号影响下一个号
                 locat = location.split(',')
                 if (!locat[0] || !locat[1]){
-                    log('未填写jkdk_location，跳过打卡');
+                    log('未填写rjrb_location，跳过打卡');
                     var checkBack = 1
                     status_code = 6
                     wait = 1
