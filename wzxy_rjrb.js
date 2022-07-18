@@ -47,14 +47,17 @@
 
 
 //cron: 3 8,16 * * *
+//===============通知设置=================//
+const Notify = 1;  //0为关闭通知，1为打开通知,默认为1
+////////////////////////////////////////////
+
 const $ = new Env('日检日报');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const fs = require("fs");
 const request = require('request');
 const {log} = console;
-const Notify = 0; //0为关闭通知，1为打开通知,默认为1
 //////////////////////
-let scriptVersion = "1.0.4";
+let scriptVersion = "1.0.5";
 let scriptVersionLatest = '';
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
@@ -300,7 +303,7 @@ function PunchIn(timeout = 3 * 1000) {
                         endTime = result['data'][i]['endTime']
 
                         if(startTime < now && now < endTime){
-                            
+
                              seq = i + 1
                             // var seq = result['data'][i]['seq']
                             // if(!seq) {
@@ -463,14 +466,12 @@ async function SendMsg(msg) {
     if (Notify > 0) {
         if ($.isNode()) {
             var notify = require('./sendNotify');
-            await notify.sendNotify($.name, msg+ `\n打卡时间：${new Date(
-                new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 +
-                8 * 60 * 60 * 1000).toLocaleString()}\n`);
+            await notify.sendNotify($.name, msg+ `\n打卡时间：${new Date().toLocaleString('chinese',{hour12:false})}\n`);
         } else {
             $.msg(msg);
         }
     } else {
-        log(msg);
+        //log(msg);
     }
 }
 
