@@ -43,19 +43,20 @@
  1.0.2 增加完整参数验证
 
  */
-
-
 //cron: 5 0 * * *
+
+//===============通知设置=================//
+const Notify = 1; //0为关闭通知，1为打开通知,默认为1
+////////////////////////////////////////////
+
 const $ = new Env('健康打卡');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const fs = require("fs");
 const request = require('request');
 const {log} = console;
-const Notify = 1; //0为关闭通知，1为打开通知,默认为1
 //////////////////////
 let scriptVersion = "1.0.2";
 let scriptVersionLatest = '';
-
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -430,14 +431,12 @@ async function SendMsg(msg) {
     if (Notify > 0) {
         if ($.isNode()) {
             var notify = require('./sendNotify');
-            await notify.sendNotify($.name, msg+ `\n打卡时间：${new Date(
-                new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 +
-                8 * 60 * 60 * 1000).toLocaleString()}\n`);
+            await notify.sendNotify($.name, msg+ `\n打卡时间：${new Date().toLocaleString('chinese',{hour12:false})}\n`);
         } else {
             $.msg(msg);
         }
     } else {
-        log(msg);
+        //log(msg);
     }
 }
 
