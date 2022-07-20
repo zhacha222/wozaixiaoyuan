@@ -42,6 +42,7 @@
  1.0.2 增加等待15s,防止黑ip
  1.0.3 修复打卡通知成功但 实际上没打上卡的bug
  1.0.4 增加完整参数验证
+ 1.0.6 修复当前时间格式
 
  */
 
@@ -57,7 +58,7 @@ const fs = require("fs");
 const request = require('request');
 const {log} = console;
 //////////////////////
-let scriptVersion = "1.0.5";
+let scriptVersion = "1.0.6";
 let scriptVersionLatest = '';
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
@@ -297,14 +298,19 @@ function PunchIn(timeout = 3 * 1000) {
                     //晨午检判断
                     for (let i = 0; i < result['data'].length; i++) {
 
-                        let now = local_hours()+`:`+local_minutes()
+                        var d = new Date()
+                        var hour = d.getHours()
+                        hour = hour > 9 ? hour : '0' + hour.toString()
+                        var minute = d.getMinutes()
+                        minute = minute > 9 ? minute : '0' + minute.toString()
+                        now = hour + `:`+minute
 
                         startTime = result['data'][i]['startTime']
                         endTime = result['data'][i]['endTime']
 
                         if(startTime < now && now < endTime){
 
-                             seq = i + 1
+                            seq = i + 1
                             // var seq = result['data'][i]['seq']
                             // if(!seq) {
                             //     seq = result['data'][i].seq
@@ -356,7 +362,7 @@ function requestAddress(timeout = 3 * 1000) {
                     timestampMs()
                     _res = result.regeocode.addressComponent
                     location = location.split(',')
-                    _data =`answers=${answers}&seq=${seq}&temperature=36.0&userId=&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${_res.city}&district=${_res.district}&province=${_res.province}&township=${_res.township}&street=${_res.streetNumber.street}&myArea=&areacode=${_res.adcode}&towncode=0&citycode=0&timestampHeader=${new Date().getTime()}`
+                    _data =`answers=${answers}&seq=${seq}&temperature=36.0&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${_res.city}&district=${_res.district}&province=${_res.province}&township=${_res.township}&street=${_res.streetNumber.street}&areacode=${_res.adcode}&towncode=0&citycode=0&timestampHeader=${new Date().getTime()}`
                     sign_data = encodeURI(_data)
                     requestAddressBack = 1
 
