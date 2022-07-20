@@ -390,14 +390,8 @@ function doPunchIn(timeout = 3 * 1000) {
         let url = {
             url: "https://student.wozaixiaoyuan.com/heat/save.json",
             headers: {
-                "Host": "student.wozaixiaoyuan.com",
                 "Content-Type": "application/x-www-form-urlencoded",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Connection": "keep-alive",
-                "User-Agent": "Mozilla/5.0 (iPad; CPU OS 15_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.23(0x1800172f) NetType/WIFI Language/zh_CN miniProgram/wxce6d08f781975d91",
-                "Referer": "https://servicewechat.com/wxce6d08f781975d91/183/page-frame.html",
-                "Content-Length": "360",
-                "JWSESSION": jwsession,
+                "jwsession": jwsession,
             },
             body: sign_data,
 
