@@ -45,13 +45,13 @@ wzxy
  username —— 手机号
  password —— 密码
 
- qd_location —— 签到 的经纬度（qd.js)
+ qd_location —— 签到 的经纬度（wzxy_qd.js)
 
- rjrb_answers —— 日检日报的 填空参数（rjrb.js）
- rjrb_location —— 日检日报的 经纬度（rjrb.js）
+ rjrb_answers —— 日检日报的 填空参数（wzxy_rjrb.js）
+ rjrb_location —— 日检日报的 经纬度（wzxy_rjrb.js）
 
- jkdk_answers —— 健康签到的 填空参数（jkdk.js）
- jkdk_location —— 健康签到的 经纬度（jkdk.js）
+ jkdk_answers —— 健康打卡的 填空参数（wzxy_jkdk.js）
+ jkdk_location —— 健康打卡的 经纬度（wzxy_jkdk.js）
 
  mark —— 用户昵称（不一定要真名，随便填都行,便于自己区分打卡用户）
 ```
