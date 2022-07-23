@@ -521,7 +521,7 @@ function modify() {
 function getVersion(timeout = 3 * 1000) {
     return new Promise((resolve) => {
         let url = {
-            url: `https://wget.sanling.ml/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/wzxy_jkdk.js`,
+            url: `https://ghproxy.com/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/wzxy_jkdk.js`,
         }
         $.get(url, async (err, resp, data) => {
             try {
