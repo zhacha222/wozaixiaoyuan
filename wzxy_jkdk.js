@@ -1,6 +1,5 @@
 /**
  作者QQ:1483081359 欢迎前来提交bug
- 日期：7-14
  微信小程序：我在校园 健康打卡
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
 
@@ -27,13 +26,13 @@
  username —— 手机号
  password —— 密码
 
- qd_location —— 签到 的经纬度（qd原始版 .js)
+ qd_location —— 签到 的经纬度（wzxy_qd.js)
 
- rjrb_answers —— 日检日报的 填空参数（rjrb.js）
- rjrb_location —— 日检日报的 经纬度（rjrb.js）
+ rjrb_answers —— 日检日报的 填空参数（wzxy_rjrb.js）
+ rjrb_location —— 日检日报的 经纬度（wzxy_rjrb.js）
 
- jkdk_answers —— 健康签到的 填空参数（jkdk.js）
- jkdk_location —— 健康签到的 经纬度（jkdk.js）
+ jkdk_answers —— 健康签到的 填空参数（wzxy_jkdk.js）
+ jkdk_location —— 健康签到的 经纬度（wzxy_jkdk.js）
 
  mark —— 用户昵称（不一定要真名，随便填都行,便于自己区分打卡用户）
 
@@ -41,6 +40,7 @@
  1.0.0 完成健康打卡的基本功能
  1.0.1 增加等待15s,防止黑ip
  1.0.2 增加完整参数验证
+ 1.0.3 增加打卡Content-Type
 
  */
 //cron: 5 0 * * *
@@ -55,7 +55,7 @@ const fs = require("fs");
 const request = require('request');
 const {log} = console;
 //////////////////////
-let scriptVersion = "1.0.2";
+let scriptVersion = "1.0.3";
 let scriptVersionLatest = '';
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
@@ -353,6 +353,7 @@ function doPunchIn(timeout = 3 * 1000) {
             url: "https://student.wozaixiaoyuan.com/health/save.json",
             headers: {
                 'jwsession': jwsession,
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: sign_data,
 
