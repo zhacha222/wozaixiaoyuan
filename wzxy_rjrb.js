@@ -26,13 +26,13 @@
  username —— 手机号
  password —— 密码
 
- qd_location —— 签到 的经纬度（qd原始版 .js)
+ qd_location —— 签到 的经纬度（wzxy_qd.js)
 
- rjrb_answers —— 日检日报的 填空参数（rjrb.js）
- rjrb_location —— 日检日报的 经纬度（rjrb.js）
+ rjrb_answers —— 日检日报的 填空参数（wzxy_rjrb.js）
+ rjrb_location —— 日检日报的 经纬度（wzxy_rjrb.js）
 
- jkdk_answers —— 健康签到的 填空参数（jkdk.js）
- jkdk_location —— 健康签到的 经纬度（jkdk.js）
+ jkdk_answers —— 健康签到的 填空参数（wzxy_jkdk.js）
+ jkdk_location —— 健康签到的 经纬度（wzxy_jkdk.js）
 
  mark —— 用户昵称（不一定要真名，随便填都行,便于自己区分打卡用户）
 
@@ -43,6 +43,7 @@
  1.0.3 修复打卡通知成功但 实际上没打上卡的bug
  1.0.4 增加完整参数验证
  1.0.6 修复当前时间格式
+ 1.0.7 增加打卡Content-Type
 
  */
 
@@ -58,7 +59,7 @@ const fs = require("fs");
 const request = require('request');
 const {log} = console;
 //////////////////////
-let scriptVersion = "1.0.6";
+let scriptVersion = "1.0.7";
 let scriptVersionLatest = '';
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
@@ -575,7 +576,7 @@ function modify() {
 function getVersion(timeout = 3 * 1000) {
     return new Promise((resolve) => {
         let url = {
-            url: `https://wget.sanling.ml/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/wzxy_rjrb.js`,
+            url: `https://ghproxy.com/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/wzxy_rjrb.js`,
         }
         $.get(url, async (err, resp, data) => {
             try {
