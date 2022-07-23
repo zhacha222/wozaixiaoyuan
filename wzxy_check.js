@@ -26,13 +26,13 @@
  username —— 手机号
  password —— 密码
 
- qd_location —— 签到 的经纬度（qd原始版 .js)
+ qd_location —— 签到 的经纬度（wzxy_qd.js)
 
- rjrb_answers —— 日检日报的 填空参数（rjrb.js）
- rjrb_location —— 日检日报的 经纬度（rjrb.js）
+ rjrb_answers —— 日检日报的 填空参数（wzxy_rjrb.js）
+ rjrb_location —— 日检日报的 经纬度（wzxy_rjrb.js）
 
- jkdk_answers —— 健康签到的 填空参数（jkdk.js）
- jkdk_location —— 健康签到的 经纬度（jkdk.js）
+ jkdk_answers —— 健康签到的 填空参数（wzxy_jkdk.js）
+ jkdk_location —— 健康签到的 经纬度（wzxy_jkdk.js）
 
  mark —— 用户昵称（不一定要真名，随便填都行,便于自己区分打卡用户）
 
@@ -65,7 +65,7 @@ const api = got.extend({
     retry: { limit: 0 },
 });
 //我在校园账号数据
-let scriptVersion = "1.0.3";
+let scriptVersion = "1.0.4";
 let scriptVersionLatest = '';
 let wzxyArr = [];
 let wait = 0;
@@ -528,7 +528,7 @@ function modify() {
 function getVersion(timeout = 3 * 1000) {
     return new Promise((resolve) => {
         let url = {
-            url: `https://wget.sanling.ml/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/wzxy_check.js`,
+            url: `https://ghproxy.com/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/wzxy_check.js`,
         }
         $.get(url, async (err, resp, data) => {
             try {
