@@ -40,6 +40,7 @@
  1.0.0 完成账号检测的基本功能：检测，重置密码，更新jwsession
  1.0.1 增加账号失效自动禁用 增加仅账号失效通知
  1.0.2 增加等待15s,防止黑ip
+ 1.0.5 适配青龙最新版
 
 
  */
@@ -50,22 +51,29 @@ const Notify = 1;      //0为关闭通知，1为打开通知,默认为1
 const errorNotify = 0; //0为关闭仅账号失效通知，1为打开仅账号失效通知,默认为0
 ////////////////////////////////////////////
 const $ = new Env('账号检测');
+const {log} = console;
+const notify = $.isNode() ? require('./sendNotify') : '';
+const request = require('request');
 const got = require('got');
 require('dotenv').config();
-const path = require('path');
-const fs = require("fs");
-const {log} = console;
-const qlDir = '/ql';
-const notify = $.isNode() ? require('./sendNotify') : '';
-const authFile = path.join(qlDir, 'config/auth.json');
 const { readFile } = require('fs/promises');
-const request = require('request');
+const path = require('path');
+const qlDir = '/ql';
+const fs = require('fs');
+let Fileexists = fs.existsSync('/ql/data/config/auth.json');
+let authFile="";
+if (Fileexists)
+    authFile="/ql/data/config/auth.json"
+else
+    authFile="/ql/config/auth.json"
+//const authFile = path.join(qlDir, 'config/auth.json');
+
 const api = got.extend({
     prefixUrl: 'http://127.0.0.1:5600',
     retry: { limit: 0 },
 });
 //我在校园账号数据
-let scriptVersion = "1.0.4";
+let scriptVersion = "1.0.5";
 let scriptVersionLatest = '';
 let wzxyArr = [];
 let wait = 0;
