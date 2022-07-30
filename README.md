@@ -8,16 +8,18 @@
 
 2.本库脚本通用 `wzxy`这一个变量
 
-3.脚本变量只推荐在青龙的【环境变量】页添加，有强迫症在`config.sh`中添加的如果出现问题自己解决
+3.脚本变量只推荐在青龙的【环境变量】页添加，有强迫症在【配置文件】`config.sh`中添加的如果出现问题自己解决
 
-4.脚本通知方式采用`青龙面板默认通知`，请自行配置
+4.脚本通知方式采用`青龙面板默认通知`，请在【配置文件】`config.sh`里配置
 
 
 ## 拉库：
 
 ```
-ql repo https://github.com/zhacha222/wozaixiaoyuan.git  "wzxy_" "sendNotify" "sendNotify"
+ql repo https://github.com/zhacha222/wozaixiaoyuan.git  "wzxy_|sendNotify" "" "sendNotify"
 ```
+
+⚠️如果网络不好拉库失败，请自行添加拉库代理 `https://ghproxy.com/`
 
 ## 环境变量：
 
