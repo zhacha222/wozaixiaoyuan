@@ -18,8 +18,7 @@
 ```
 ql repo https://github.com/zhacha222/wozaixiaoyuan.git  "wzxy_|sendNotify" "" "sendNotify"
 ```
-
-⚠️如果网络不好拉库失败，请自行添加拉库代理 `https://ghproxy.com/`
+如果网络不好拉库失败，请自行添加拉库代理 `https://ghproxy.com/`
 
 ## 环境变量：
 
@@ -43,20 +42,34 @@ wzxy
 
 
 **关于变量值中各参数的说明：**
-```
- username —— 手机号
- password —— 密码
 
- qd_location —— 签到 的经纬度（wzxy_qd.js)
+ * `username` —— “我在校园”的账号，一般是你的手机号码
+ * `password` —— “我在校园”的密码，忘记了打开小程序重新设置就行（建议四个英文+四个数字 类似“wzxy1234” 复杂了简单了可能都不行,改完密码运行脚本前不要再登录小程序）
 
- rjrb_answers —— 日检日报的 填空参数（wzxy_rjrb.js）
- rjrb_location —— 日检日报的 经纬度（wzxy_rjrb.js）
+ * `qd_location` —— 签到位置的经纬度（wzxy_qd.js)
 
- jkdk_answers —— 健康打卡的 填空参数（wzxy_jkdk.js）
- jkdk_location —— 健康打卡的 经纬度（wzxy_jkdk.js）
+ * `rjrb_answers` —— 日检日报的 填空参数（wzxy_rjrb.js） 这里对这个填空参数说明一下，如果是选项是填空，那么直接填上填空内容；如果是选择题，选项一填`0`,选项二填`1`，以此类推 
+ 
+ 
+ 
+ 
+ * `rjrb_location` —— 日检日报位置的经纬度（wzxy_rjrb.js）
 
- mark —— 用户昵称（不一定要真名，随便填都行,便于自己区分打卡用户）
-```
+ * `jkdk_answers` —— 健康打卡的 填空参数（wzxy_jkdk.js）
+ * `jkdk_location` —— 健康打卡位置的经纬度（wzxy_jkdk.js）
+
+ * `mark` —— 用户昵称（不一定要真名，随便填都行,便于自己区分打卡用户）
+
+## 一些踩坑以及经验：
+
+1.我在校园密码不能太复杂，也不能太简单，推荐使用四个英文+四个数字，例如我用是`wzxy1234`
+
+2.如果第一次使用，即使密码没问题，但是运行脚本时提示密码错误，请去小程序修改密码后重新运行脚本（我在校园本身的bug）
+
+3.经纬度获取可以去这个网站获取，一般精确到小数点后六位就差不多了 
+https://jingweidu.bmcx.com/
+
+4.脚本运行时间采用正则表达式，对此不太熟练的可以去这个在线网站一键生成 http://cron.ciding.cc/
 
 
 ## 通知方式：
@@ -80,3 +93,6 @@ wzxy
 **企业微信应用通知教程：https://www.zc4g.cn/658.html**
 
 <img src="https://cdn.jsdelivr.net/gh/zhacha222/wozaixiaoyuan@e149d21fd4ae3e8cfef8654708c2fbe6fb54a17f/jpg/A97F963D4799767B81EDDD73A763BF19.jpg" width="270px" height="600px" alt="daka" align=center>
+
+
+
