@@ -48,15 +48,13 @@ wzxy
 
  * `qd_location` —— 签到位置的经纬度（wzxy_qd.js)
 
- * `rjrb_answers` —— 日检日报的 填空参数（wzxy_rjrb.js） 这里对这个填空参数说明一下，如果是选项是填空，那么直接填上填空内容；如果是选择题，选项一填`0`,选项二填`1`，以此类推 
- 
- 
- 
+ * `rjrb_answers` —— 日检日报的 填空参数（wzxy_rjrb.js） 看下面`一些踩坑以及经验`的第5条
  
  * `rjrb_location` —— 日检日报位置的经纬度（wzxy_rjrb.js）
 
- * `jkdk_answers` —— 健康打卡的 填空参数（wzxy_jkdk.js）
- * `jkdk_location` —— 健康打卡位置的经纬度（wzxy_jkdk.js）
+ * `jkdk_answers` —— 健康打卡的 填空参数（wzxy_jkdk.js） 
+ 
+ * `jkdk_location` —— 健康打卡位置的经纬度（wzxy_jkdk.js） 参考下面`一些踩坑以及经验`的第5条
 
  * `mark` —— 用户昵称（不一定要真名，随便填都行,便于自己区分打卡用户）
 
@@ -71,7 +69,14 @@ https://jingweidu.bmcx.com/
 
 4.脚本运行时间采用正则表达式，对此不太熟练的可以去这个在线网站一键生成 http://cron.ciding.cc/
 
-
+5.这里对这个填空参数说明一下，如果是填空，那么参数就是填空内容；如果是选择题，那么 选项一 参数是`0`,选项二 参数是`1`，以此类推····
+ 
+  最终的参数用`[]`括起来，每一单独选项参数填入`""`内，再用`,`隔开
+ 
+  ***举个例子，我这的日检日报参数就是 ["0","0"]***
+ 
+ <img src="https://ghproxy.com/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/jpg/Screenshot_2022_0730_200049.jpg" width="270px" height="600px" alt="daka" align=center>
+ 
 ## 通知方式：
 
 **在下面随便选一个自己喜欢的推送方式**
