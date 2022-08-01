@@ -44,6 +44,7 @@
  1.0.4 增加完整参数验证
  1.0.6 修复当前时间格式
  1.0.7 增加打卡Content-Type
+ 1.0.8 修复地址信息请求失败的bug
 
  */
 
@@ -59,7 +60,7 @@ const fs = require("fs");
 const request = require('request');
 const {log} = console;
 //////////////////////
-let scriptVersion = "1.0.7";
+let scriptVersion = "1.0.8";
 let scriptVersionLatest = '';
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
@@ -331,7 +332,7 @@ function PunchIn(timeout = 3 * 1000) {
 
                 }
                 if (result.code != 0 && result.code != -10) {
-                    log(`获取失败，原因：${error}`)
+                    log(`❌ 获取失败，原因：${error}`)
                     PunchInBack = 0
                 }
 
@@ -350,25 +351,25 @@ function PunchIn(timeout = 3 * 1000) {
  */
 function requestAddress(timeout = 3 * 1000) {
     return new Promise((resolve) => {
+        location = location.split(',')
         let url = {
-            url: `https://restapi.amap.com/v3/geocode/regeo?key=819cfa3cf713874e1757cba0b50a0172&location=${location}`,
+            url: `https://apis.map.qq.com/ws/geocoder/v1/?key=A3YBZ-NC5RU-MFYVV-BOHND-RO3OT-ABFCR&location=${location[1]},${location[0]}`,
         }
 
-        $.post(url, async (error, response, data) => {
+        $.get(url, async (error, response, data) => {
             try {
                 let result = data == "undefined" ? await requestAddress() : JSON.parse(data);
 
-                if (result.status == 1) {
+                if (result.status == 0) {
                     log(`地址信息获取成功`);
                     timestampMs()
-                    _res = result.regeocode.addressComponent
                     location = location.split(',')
-                    _data =`answers=${answers}&seq=${seq}&temperature=36.0&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${_res.city}&district=${_res.district}&province=${_res.province}&township=${_res.township}&street=${_res.streetNumber.street}&areacode=${_res.adcode}&towncode=0&citycode=0&timestampHeader=${new Date().getTime()}`
+                    _data =`answers=${answers}&seq=${seq}&temperature=36.0&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${result.result.address_component.city}&district=${result.result.address_component.district}&province=${result.result.address_component.province}&township=${result.result.address_reference.town.title}&street=${result.result.address_reference.street.title}&areacode=${result.result.ad_info.adcode}&towncode=0&citycode=0&timestampHeader=${new Date().getTime()}`
                     sign_data = encodeURI(_data)
                     requestAddressBack = 1
 
                 } else {
-                    log(`地址信息获取失败`)
+                    log(`❌ 地址信息获取失败`)
                     requestAddressBack = 0
                 }
 
