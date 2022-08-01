@@ -322,7 +322,9 @@ function requestAddress(timeout = 3 * 1000) {
                 if (result.status == 0) {
                     log(`地址信息获取成功`);
                     timestampMs()
-                    _data =`answers=${answers}&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${result.result.address_component.city}&district=${result.result.address_component.district}&province=${result.result.address_component.province}&township=${result.result.address_reference.town.title}&street=${result.result.address_reference.street.title}&areacode=${result.result.ad_info.adcode}&towncode="0"&citycode="0"&timestampHeader=${new Date().getTime()}`
+                    try {town=result.result.address_reference.town.title}catch (e) {town=``}
+                    try {street=result.result.address_reference.street.title}catch (e) {street=``}
+                    _data =`answers=${answers}&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${result.result.address_component.city}&district=${result.result.address_component.district}&province=${result.result.address_component.province}&township=${town}&street=${street}&areacode=${result.result.ad_info.adcode}&towncode="0"&citycode="0"&timestampHeader=${new Date().getTime()}`
                     sign_data = encodeURI(_data)
                     requestAddressBack = 1
                 } else {
