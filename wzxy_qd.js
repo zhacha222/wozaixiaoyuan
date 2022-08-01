@@ -40,6 +40,7 @@
  1.0.0 完成签到的基本功能
  1.0.1 增加等待15s,防止黑ip
  1.0.2 增加完整参数验证
+ 1.0.5 修复地址信息请求失败的bug
 
  */
 //cron: 0
@@ -55,7 +56,7 @@ const request = require('request');
 const {log} = console;
 
 //////////////////////
-let scriptVersion = "1.0.4";
+let scriptVersion = "1.0.5";
 let scriptVersionLatest = '';
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
@@ -304,35 +305,32 @@ function PunchIn(timeout = 3 * 1000) {
  */
 function requestAddress(timeout = 3 * 1000) {
     return new Promise((resolve) => {
+        location = location.split(',')
         let url = {
-            url: `https://restapi.amap.com/v3/geocode/regeo?key=819cfa3cf713874e1757cba0b50a0172&location=${location}`,
+            url: `https://apis.map.qq.com/ws/geocoder/v1/?key=A3YBZ-NC5RU-MFYVV-BOHND-RO3OT-ABFCR&location=${location[1]},${location[0]}`,
         }
-
-        $.post(url, async (error, response, data) => {
+        $.get(url, async (error, response, data) => {
             try {
                 let result = data == "undefined" ? await requestAddress() : JSON.parse(data);
-                if (result.status == 1) {
+                if (result.status == 0) {
                     log(`地址信息获取成功`);
-
-                    _res = result.regeocode.addressComponent
-                    location = location.split(',')
                     data = {
                         "latitude": location[1],
                         "longitude": location[0],
                         "country": encodeURI('中国'),
-                        "district": encodeURI(_res.district),
-                        "province": encodeURI(_res.province),
-                        "township": encodeURI(_res.township),
+                        "district": encodeURI(result.result.address_component.district),
+                        "province": encodeURI(result.result.address_component.province),
+                        "township": encodeURI(result.result.address_reference.town.title),
                         "towncode": "0",
                         "citycode": "0",
-                        "street": encodeURI(_res.streetNumber.street),
+                        "street": encodeURI(result.result.address_reference.street.title),
                         "id": id,
                         "signId": signId,
                     }
                     sign_data = JSON.stringify(data)
                     requestAddressBack = 1
                 } else {
-                    log(`地址信息获取失败`)
+                    log(`❌ 地址信息获取失败`)
                     requestAddressBack = 0
                 }
 
