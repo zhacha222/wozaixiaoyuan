@@ -314,16 +314,18 @@ function requestAddress(timeout = 3 * 1000) {
                 let result = data == "undefined" ? await requestAddress() : JSON.parse(data);
                 if (result.status == 0) {
                     log(`地址信息获取成功`);
+                    try {town=result.result.address_reference.town.title}catch (e) {town=``}
+                    try {street=result.result.address_reference.street.title}catch (e) {street=``}
                     data = {
                         "latitude": location[1],
                         "longitude": location[0],
                         "country": encodeURI('中国'),
                         "district": encodeURI(result.result.address_component.district),
                         "province": encodeURI(result.result.address_component.province),
-                        "township": encodeURI(result.result.address_reference.town.title),
+                        "township": encodeURI(town),
                         "towncode": "0",
                         "citycode": "0",
-                        "street": encodeURI(result.result.address_reference.street.title),
+                        "street": encodeURI(street),
                         "id": id,
                         "signId": signId,
                     }
