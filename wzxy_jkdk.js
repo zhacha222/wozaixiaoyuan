@@ -41,6 +41,7 @@
  1.0.1 增加等待15s,防止黑ip
  1.0.2 增加完整参数验证
  1.0.3 增加打卡Content-Type
+ 1.0.4 修复地址信息获取失败的bug
 
  */
 //cron: 5 0 * * *
@@ -55,7 +56,7 @@ const fs = require("fs");
 const request = require('request');
 const {log} = console;
 //////////////////////
-let scriptVersion = "1.0.3";
+let scriptVersion = "1.0.4";
 let scriptVersionLatest = '';
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
@@ -123,27 +124,27 @@ let locat = '';
                     await checkJwsession()
                     await $.wait(2 * 1000);
 
-                if (loginBack > 0) {
+                    if (loginBack > 0) {
 
-                    log('开始获取打卡列表...');
-                    await PunchIn()
-                    await $.wait(2 * 1000);
-
-                    if (PunchInBack > 0) {
-                        log('正在请求地址信息...');
-                        await requestAddress()
+                        log('开始获取打卡列表...');
+                        await PunchIn()
                         await $.wait(2 * 1000);
 
-                        if (requestAddressBack) {
-                            log('开始健康打卡...');
-                            await doPunchIn()
+                        if (PunchInBack > 0) {
+                            log('正在请求地址信息...');
+                            await requestAddress()
                             await $.wait(2 * 1000);
+
+                            if (requestAddressBack) {
+                                log('开始健康打卡...');
+                                await doPunchIn()
+                                await $.wait(2 * 1000);
+
+                            }
 
                         }
 
                     }
-
-                 }
                 }
                 var resultlog = getResult()
                 msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
@@ -292,7 +293,7 @@ function PunchIn(timeout = 3 * 1000) {
                     PunchInBack = 1
                 }
                 if (result.code != 0 && result.code != -10) {
-                    log(`获取失败，原因：${error}`)
+                    log(`❌ 获取失败，原因：${error}`)
                     PunchInBack = 0
                 }
 
@@ -311,25 +312,21 @@ function PunchIn(timeout = 3 * 1000) {
  */
 function requestAddress(timeout = 3 * 1000) {
     return new Promise((resolve) => {
+        location = location.split(',')
         let url = {
-            url: `https://restapi.amap.com/v3/geocode/regeo?key=819cfa3cf713874e1757cba0b50a0172&location=${location}`,
+            url: `https://apis.map.qq.com/ws/geocoder/v1/?key=A3YBZ-NC5RU-MFYVV-BOHND-RO3OT-ABFCR&location=${location[1]},${location[0]}`,
         }
-
-        $.post(url, async (error, response, data) => {
+        $.get(url, async (error, response, data) => {
             try {
                 let result = data == "undefined" ? await requestAddress() : JSON.parse(data);
-
-                if (result.status == 1) {
+                if (result.status == 0) {
                     log(`地址信息获取成功`);
                     timestampMs()
-                    _res = result.regeocode.addressComponent
-                    location = location.split(',')
-                    _data =`answers=${answers}&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${_res.city}&district=${_res.district}&province=${_res.province}&township=${_res.township}&street=${_res.streetNumber.street}&areacode=${_res.adcode}&towncode="0"&citycode="0"&timestampHeader=${new Date().getTime()}`
+                    _data =`answers=${answers}&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${result.result.address_component.city}&district=${result.result.address_component.district}&province=${result.result.address_component.province}&township=${result.result.address_reference.town.title}&street=${result.result.address_reference.street.title}&areacode=${result.result.ad_info.adcode}&towncode="0"&citycode="0"&timestampHeader=${new Date().getTime()}`
                     sign_data = encodeURI(_data)
                     requestAddressBack = 1
-
                 } else {
-                    log(`地址信息获取失败`)
+                    log(`❌ 地址信息获取失败`)
                     requestAddressBack = 0
                 }
 
