@@ -77,6 +77,8 @@ https://jingweidu.bmcx.com/
  
  <img src="https://ghproxy.com/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/jpg/Screenshot_2022_0730_200049.jpg" width="270px" height="600px" alt="daka" align=center>
  
+ 6.最后可以去这个网站进行格式化检验 https://www.bejson.com/
+ 
 ## 通知方式：
 
 **在下面随便选一个自己喜欢的推送方式**
