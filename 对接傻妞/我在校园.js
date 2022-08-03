@@ -56,7 +56,7 @@ function mian() {
 		return;
     }else if (iii == 3) { //教程
     var jiaocheng = request({url: "https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan/blob/main/%E5%AF%B9%E6%8E%A5%E5%82%BB%E5%A6%9E/%E6%95%99%E7%A8%8B.txt"})
-        sendText(`教程：\n`+jiaocheng)
+        sendText(jiaocheng)
 		return;
     }else if (iii == 4) { //青龙绑定
         if (isAdmin) {
