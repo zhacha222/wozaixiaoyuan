@@ -1,4 +1,3 @@
-
 /**
  作者QQ:1483081359 欢迎前来提交bug
  微信小程序：我在校园 报备返校
@@ -45,7 +44,7 @@
 //cron: 5 0 * * *
 
 //===============通知设置=================//
-const Notify = 0; //0为关闭通知，1为打开通知,默认为1
+const Notify = 1; //0为关闭通知，1为打开通知,默认为1
 ////////////////////////////////////////////
 
 const $ = new Env('报备返校');
@@ -61,16 +60,296 @@ let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
 let wait = 0;
 let loginBack = 0;
-let PunchInBack = 0;
+let PunchInback = 0;
 let msg = '';
 let id = '';
 let jwsession = '';
 let status_code = 0;
+let endDatetime = '';
+let state = '';
 
 
-log(`别急呀，正式版脚本等开学测试完再发布，如果假期就有需要的，可以联系本人QQ1483081359提前测试脚本哦！`)
+
+!(async () => {
+    if (typeof $request !== "undefined") {
+        await GetRewrite();
+    } else {
+        if (!(await Envs()))
+            return;
+        else {
+
+            log(`\n\n=============================================    \n脚本执行 - 北京时间(UTC+8)：${new Date(
+                new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 +
+                8 * 60 * 60 * 1000).toLocaleString()} \n=============================================\n`);
+
+            await poem();
+            await getVersion();
+            log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
+            log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
 
 
+            for (let index = 0; index < wzxyArr.length; index++) {
+
+                let num = index + 1
+                if (num >1 && wait == 0){
+                    log('**********休息15s，防止黑IP**********');
+                    await $.wait(16 * 1000);
+                }
+                log(`\n========= 开始【第 ${num} 个账号】=========\n`)
+                data = wzxyArr[index];
+                content = JSON.parse(data)
+                username = content.username
+                password = content.password
+                mark = content.mark
+                log(`返校用户：${mark}`)
+                loginBack = 0;
+
+                log('开始检查jwsession是否存在...');
+                await checkJwsession()
+                await $.wait(2 * 1000);
+
+                if (loginBack > 0) {
+                    PunchInback = 0//重置上个账号的状态码
+                    log('开始获取报备列表...');
+                    await PunchIn()
+                    await $.wait(2 * 1000);
+
+                    if (PunchInback>0) {
+                        log('开始报备返校...');
+                        await doPunchIn()
+                        await $.wait(2 * 1000);
+                    }
+                }
+                var resultlog = getResult()
+                msg += `返校用户：${mark}\n返校情况：${resultlog}\n\n`
+
+            }
+
+            // log(msg);
+            await SendMsg(msg);
+        }
+    }
+
+})()
+    .catch((e) => log(e))
+    .finally(() => $.done())
+
+
+
+/**
+ * 判断jwsession是否存在
+ */
+function checkJwsession() {
+
+    fs.open('.cache/' + username + ".json", 'r+', function(err, fd) {
+        if (err) {
+            console.error("找不到cache文件，正在使用账号信息登录...")
+            login()
+            return
+        }
+        console.log("找到cache文件，正在使用jwsession返校...")
+        var read = fs.readFileSync('.cache/' + username + ".json")
+        jwsession = read.toString()
+        loginBack = 1
+
+    });
+
+}
+
+
+/**
+ * 登录
+ */
+function login(timeout = 3 * 1000) {
+    return new Promise((resolve) => {
+        let url = {
+            url: `https://gw.wozaixiaoyuan.com/basicinfo/mobile/login/username?username=${username}&password=${password}`,
+            headers: {
+                "Accept-Encoding": "gzip, deflate, br",
+                "Connection": "keep-alive",
+                "User-Agent": "Mozilla/5.0 (iPad; CPU OS 15_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.23(0x1800172f) NetType/WIFI Language/zh_CN miniProgram/wxce6d08f781975d91",
+                "content-type": "application/json;charset=UTF-8",
+                "Content-Length": "2",
+                "Host": "gw.wozaixiaoyuan.com",
+                "Accept-Language": "en-us,en",
+                "Accept": "application/json, text/plain, */*"
+            },
+            data: ``,
+        }
+
+
+        request.post(url, async (error, response, data) => {
+            try {
+                let result = data == "undefined" ? await login() : JSON.parse(data);
+
+                //登录成功
+                if (result.code == 0 ) {
+
+                    jwsession = response.headers['jwsession']
+                    //储存jwsession
+                    setJwsession(jwsession)
+                    loginBack = 1;
+                    log(`登录成功`)
+
+                } else {
+                    log(`❌ 登录失败，${result.message}`)
+                    status_code = 5;
+                    loginBack = 0;
+                }
+
+            } catch (e) {
+                log(e)
+            } finally {
+                resolve();
+            }
+        }, timeout)
+    })
+}
+
+
+/**
+ * 存储jwsession
+ */
+function setJwsession(jwsession) {
+
+    fs.mkdir('.cache',function(err){
+        if (err) {
+
+            console.log("找到cache文件");
+        }
+        else console.log("正在创建cache储存目录与文件...");
+    });
+
+    fs.writeFile('.cache/' + username + ".json", jwsession,  function(err) {
+        if (err) {
+            return console.error(err);
+        }
+        console.log("更新jwsession成功");
+    })
+
+}
+
+
+/**
+ * 获取报备列表
+ */
+function PunchIn(timeout = 3 * 1000) {
+    return new Promise((resolve) => {
+
+        let url = {
+            url: "https://gw.wozaixiaoyuan.com/out/mobile/out/getList?page=1&size=8",
+            headers: {
+                'jwsession': jwsession,
+                'Content-Type': 'application/json'
+            },
+            body: ``
+        }
+
+        $.post(url, async (error, response, data) => {
+            //log(data)
+            try {
+                let result = data == "undefined" ? await PunchIn() : JSON.parse(data);
+                if (result.code == 103) {
+                    log('jwsession 无效，尝试账号密码登录...')
+                    status_code = 4;
+                    PunchInback = 0;
+                    loginBack = 0;
+                    await login()
+                    await $.wait(2 * 1000);
+                    if (loginBack > 0) {
+                        log('重新获取报备列表...');
+                        await PunchIn()
+                        await $.wait(2 * 1000)
+                        return
+                    }
+                }
+                if (result.code == 0) {
+                    id = result.data[0].id
+                    endDatetime =result.data[0].endDatetime
+                    state =result.data[0].state //state为2表示未返校，为5表示已返校，为4表示当前已超过返校时间
+                    //log(state)
+                    if (state==5){
+                        log('🈚️ 暂无返校任务，跳过返校...')
+                        wait = 1
+                        status_code = 2
+                        PunchInback = 0
+                    }else if(state==2){
+                        log("✅ 找到未返校任务，开始返校...")
+                        PunchInback = 1
+                        wait=0
+                    }else if(state==4){
+                        log("⚠ 当前已超过返校时间，开始返校...")
+                        PunchInback = 1
+                        wait=0
+                    }
+
+                }
+                if (result.code != 0) {
+                    log(`获取失败，原因：${error}`)
+                    PunchInback = 0
+                }
+
+            } catch (e) {
+                log(e)
+            } finally {
+                resolve();
+            }
+        }, timeout)
+    })
+}
+
+
+/**
+ * 开始返校
+ */
+function doPunchIn(timeout = 3 * 1000) {
+    return new Promise((resolve) => {
+        let url = {
+            url: `https://gw.wozaixiaoyuan.com/out/mobile/out/back?id=${id}`,
+            headers: {
+                'jwsession': jwsession,
+                'Content-Type': 'application/json'
+            },
+            body: ``,
+
+        }
+
+        $.post(url, async (error, response, data) => {
+
+            try {
+                let result = data == "undefined" ? await doPunchIn() : JSON.parse(data);
+
+                //返校情况
+                if (result.code == 0){
+                    log("✅ 返校成功")
+                    status_code = 1
+                } else{
+                    log("❌ 返校失败")
+                    status_code = 0
+                }
+
+            } catch (e) {
+                log(e)
+            } finally {
+                resolve();
+            }
+        }, timeout)
+    })
+}
+
+
+/**
+ * 获取返校结果
+ */
+function getResult(timeout = 3 * 1000) {
+    res = status_code
+    if (res == 1) return "✅ 返校成功"
+    if (res == 2) return "🈚️ 当前无返校任务"
+    if (res == 3) return "❌ 返校失败，当前不在返校时间段内"
+    if (res == 4) return "❌ 返校失败，jwsession 无效"
+    if (res == 5) return "❌ 返校失败，登录错误，请检查账号信息"
+    else return "❌ 返校失败，发生未知错误"
+}
 
 
 // ============================================变量检查============================================ \\
@@ -104,7 +383,7 @@ async function SendMsg(msg) {
     if (Notify > 0) {
         if ($.isNode()) {
             var notify = require('./sendNotify');
-            await notify.sendNotify($.name, msg+ `\n打卡时间：${new Date().toLocaleString('chinese',{hour12:false})}\n`);
+            await notify.sendNotify($.name, msg+ `\n执行时间：${new Date().toLocaleString('chinese',{hour12:false})}\n`);
         } else {
             $.msg(msg);
         }
@@ -193,7 +472,7 @@ function modify() {
 function getVersion(timeout = 3 * 1000) {
     return new Promise((resolve) => {
         let url = {
-            url: `https://ghproxy.com/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/wzxy_jkdk.js`,
+            url: `https://ghproxy.com/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/wzxy_bbfx.js`,
         }
         $.get(url, async (err, resp, data) => {
             try {
