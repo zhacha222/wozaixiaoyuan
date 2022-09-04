@@ -278,7 +278,7 @@ function PunchIn(timeout = 3 * 1000) {
                         PunchInback = 1
                         wait=0
                     }else if(state==4){
-                        log("⚠ 当前已超过返校时间，开始返校...")
+                        log("⚠️ 当前已超过返校时间，开始返校...")
                         PunchInback = 1
                         wait=0
                     }
