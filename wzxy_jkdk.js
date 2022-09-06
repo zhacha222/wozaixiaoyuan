@@ -42,7 +42,7 @@
  1.0.2 增加完整参数验证
  1.0.3 增加打卡Content-Type
  1.0.4 修复地址信息获取失败的bug
- 1.0.5 优化
+ 1.0.5 优化通知
 
  */
 //cron: 5 0 * * *
@@ -55,9 +55,7 @@ const $ = new Env('健康打卡');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const fs = require("fs");
 const request = require('request');
-const {
-    log
-} = console;
+const {log} = console;
 //////////////////////
 let scriptVersion = "1.0.5";
 let scriptVersionLatest = '';
@@ -78,7 +76,7 @@ let status_code = 0;
 let locat = '';
 
 
-!(async() => {
+!(async () => {
     if (typeof $request !== "undefined") {
         await GetRewrite();
     } else {
@@ -100,7 +98,7 @@ let locat = '';
 
 
                 let num = index + 1
-                if (num > 1 && wait == 0) {
+                if (num >1 && wait == 0){
                     log('**********休息15s，防止黑IP**********');
                     await $.wait(16 * 1000);
                 }
@@ -116,7 +114,7 @@ let locat = '';
                 var checkBack = 0;
                 loginBack = 0;
                 locat = location.split(',')
-                if (!locat[0] || !locat[1]) {
+                if (!locat[0] || !locat[1]){
                     log('未填写jkdk_location，跳过打卡');
                     var checkBack = 1
                     status_code = 6
@@ -160,7 +158,7 @@ let locat = '';
     }
 
 })()
-.catch((e) => log(e))
+    .catch((e) => log(e))
     .finally(() => $.done())
 
 
@@ -207,15 +205,15 @@ function login(timeout = 3 * 1000) {
         }
 
 
-        request.post(url, async(error, response, data) => {
+        request.post(url, async (error, response, data) => {
             try {
                 let result = data == "undefined" ? await login() : JSON.parse(data);
 
                 //登录成功
-                if (result.code == 0) {
+                if (result.code == 0 ) {
 
                     jwsession = response.headers['jwsession']
-                        //储存jwsession
+                    //储存jwsession
                     setJwsession(jwsession)
                     loginBack = 1;
                     log(`登录成功`)
@@ -241,14 +239,15 @@ function login(timeout = 3 * 1000) {
  */
 function setJwsession(jwsession) {
 
-    fs.mkdir('.cache', function(err) {
+    fs.mkdir('.cache',function(err){
         if (err) {
 
             console.log("找到cache文件");
-        } else console.log("正在创建cache储存目录与文件...");
+        }
+        else console.log("正在创建cache储存目录与文件...");
     });
 
-    fs.writeFile('.cache/' + username + ".json", jwsession, function(err) {
+    fs.writeFile('.cache/' + username + ".json", jwsession,  function(err) {
         if (err) {
             return console.error(err);
         }
@@ -272,7 +271,7 @@ function PunchIn(timeout = 3 * 1000) {
             body: ''
         }
 
-        $.post(url, async(error, response, data) => {
+        $.post(url, async (error, response, data) => {
             try {
                 let result = data == "undefined" ? await PunchIn() : JSON.parse(data);
 
@@ -318,23 +317,15 @@ function requestAddress(timeout = 3 * 1000) {
         let url = {
             url: `https://apis.map.qq.com/ws/geocoder/v1/?key=A3YBZ-NC5RU-MFYVV-BOHND-RO3OT-ABFCR&location=${location[1]},${location[0]}`,
         }
-        $.get(url, async(error, response, data) => {
+        $.get(url, async (error, response, data) => {
             try {
                 let result = data == "undefined" ? await requestAddress() : JSON.parse(data);
                 if (result.status == 0) {
                     log(`地址信息获取成功`);
                     timestampMs()
-                    try {
-                        town = result.result.address_reference.town.title
-                    } catch (e) {
-                        town = ``
-                    }
-                    try {
-                        street = result.result.address_reference.street.title
-                    } catch (e) {
-                        street = ``
-                    }
-                    _data = `answers=${answers}&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${result.result.address_component.city}&district=${result.result.address_component.district}&province=${result.result.address_component.province}&township=${town}&street=${street}&areacode=${result.result.ad_info.adcode}&towncode="0"&citycode="0"&timestampHeader=${new Date().getTime()}`
+                    try {town=result.result.address_reference.town.title}catch (e) {town=``}
+                    try {street=result.result.address_reference.street.title}catch (e) {street=``}
+                    _data =`answers=${answers}&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${result.result.address_component.city}&district=${result.result.address_component.district}&province=${result.result.address_component.province}&township=${town}&street=${street}&areacode=${result.result.ad_info.adcode}&towncode="0"&citycode="0"&timestampHeader=${new Date().getTime()}`
                     sign_data = encodeURI(_data)
                     requestAddressBack = 1
                 } else {
@@ -368,21 +359,21 @@ function doPunchIn(timeout = 3 * 1000) {
 
         }
 
-        $.post(url, async(error, response, data) => {
+        $.post(url, async (error, response, data) => {
             try {
                 let result = data == "undefined" ? await doPunchIn() : JSON.parse(data);
 
                 //打卡情况
-                if (result.code == 0) {
+                if (result.code == 0){
                     log("✅ 打卡成功")
                     status_code = 1
                 }
-                if (result.code == 1 && result.message == `今日健康打卡已结束`) {
+                if (result.code == 1 && result.message == `今日健康打卡已结束`){
                     log("❌ 打卡失败，当前不在打卡时间段内")
                     status_code = 3
                 }
                 if (result.code != 0) {
-                    log("❌ 打卡失败，原因：" + data)
+                    log("❌ 打卡失败，原因："+data)
                 }
 
             } catch (e) {
@@ -411,39 +402,37 @@ function getResult(timeout = 3 * 1000) {
 
 
 // ============================================变量检查============================================ \\
-async
-function Envs() {
-        if (wzxy) {
-            if (wzxy.indexOf("@") != -1 || wzxy.indexOf("&") != -1) {
-                wzxy.split("@" && "&").forEach((item) => {
-                    wzxyArr.push(item);
-                });
-            }
+async function Envs() {
+    if (wzxy) {
+        if (wzxy.indexOf("@") != -1 || wzxy.indexOf("&") != -1) {
+            wzxy.split("@"&&"&").forEach((item) => {
+                wzxyArr.push(item);
+            });
+        }
             // else if (wzxy.indexOf("\n") != -1) {
             //     wzxy.split("\n").forEach((item) => {
             //         wzxyArr.push(item);
             //     });
-            // }
-            else {
-                wzxyArr.push(wzxy);
-            }
-        } else {
-            log(`\n 未填写变量 wzxy`)
-            return;
+        // }
+        else {
+            wzxyArr.push(wzxy);
         }
-
-        return true;
+    } else {
+        log(`\n 未填写变量 wzxy`)
+        return;
     }
-    // ============================================发送消息============================================ \\
-async
-function SendMsg(msg) {
+
+    return true;
+}
+// ============================================发送消息============================================ \\
+async function SendMsg(msg) {
     if (!msg)
         return;
 
     if (Notify > 0) {
         if ($.isNode()) {
             var notify = require('./sendNotify');
-            await notify.sendNotify($.name, msg + `\n打卡时间：${t()}\n`);
+            await notify.sendNotify($.name, msg+ `\n打卡时间：${t()}\n`);
         } else {
             $.msg(msg);
         }
@@ -475,7 +464,7 @@ function randomInt(min, max) {
 /**
  * 获取毫秒时间戳
  */
-function timestampMs() {
+function timestampMs(){
     return new Date().getTime();
 }
 
@@ -483,8 +472,8 @@ function timestampMs() {
  *
  * 获取秒时间戳
  */
-function timestampS() {
-    return Date.parse(new Date()) / 1000;
+function timestampS(){
+    return Date.parse(new Date())/1000;
 }
 
 /**
@@ -495,7 +484,7 @@ function poem(timeout = 3 * 1000) {
         let url = {
             url: `https://v1.jinrishici.com/all.json`
         }
-        $.get(url, async(err, resp, data) => {
+        $.get(url, async (err, resp, data) => {
             try {
                 data = JSON.parse(data)
                 log(`${data.content}  \n————《${data.origin}》${data.author}`);
@@ -513,15 +502,14 @@ function poem(timeout = 3 * 1000) {
  */
 function modify() {
 
-    fs.readFile('/ql/data/config/config.sh', 'utf8', function(err, dataStr) {
-        if (err) {
-            return log('读取文件失败！' + err)
-        } else {
-            var result = dataStr.replace(/regular/g, string);
-            fs.writeFile('/ql/data/config/config.sh', result, 'utf8', function(err) {
-                if (err) {
-                    return log(err);
-                }
+    fs.readFile('/ql/data/config/config.sh','utf8',function(err,dataStr){
+        if(err){
+            return log('读取文件失败！'+err)
+        }
+        else {
+            var result = dataStr.replace(/regular/g,string);
+            fs.writeFile('/ql/data/config/config.sh', result, 'utf8', function (err) {
+                if (err) {return log(err);}
             });
         }
     })
@@ -535,7 +523,7 @@ function getVersion(timeout = 3 * 1000) {
         let url = {
             url: `https://ghproxy.com/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/wzxy_jkdk.js`,
         }
-        $.get(url, async(err, resp, data) => {
+        $.get(url, async (err, resp, data) => {
             try {
                 scriptVersionLatest = data.match(/scriptVersion = "([\d\.]+)"/)[1]
             } catch (e) {
