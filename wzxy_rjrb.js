@@ -2,6 +2,10 @@
  作者QQ:1483081359 欢迎前来提交bug
  微信小程序：我在校园 日检日报
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
+ 
+  默认每天运行两次。如果打卡不止两次，自己改定时，在打卡时间段内运行即可
+ 
+ 
 
  变量名称：wzxy
  变量值：  {
