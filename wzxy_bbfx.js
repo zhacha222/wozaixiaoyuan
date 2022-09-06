@@ -38,7 +38,7 @@
 
  ***工作日志：
  1.0.0 完成 的基本功能
- 1.0.1 优化
+ 1.0.1 优化通知
 
 
  */
@@ -48,13 +48,11 @@
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
 ////////////////////////////////////////////
 
-const $ = new Env('报备返校');
+const $ = new Env('报备自动确认返校');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const fs = require("fs");
 const request = require('request');
-const {
-    log
-} = console;
+const {log} = console;
 //////////////////////
 let scriptVersion = "1.0.1";
 let scriptVersionLatest = '';
@@ -73,7 +71,7 @@ let state = '';
 
 
 
-!(async() => {
+!(async () => {
     if (typeof $request !== "undefined") {
         await GetRewrite();
     } else {
@@ -94,7 +92,7 @@ let state = '';
             for (let index = 0; index < wzxyArr.length; index++) {
 
                 let num = index + 1
-                if (num > 1 && wait == 0) {
+                if (num >1 && wait == 0){
                     log('**********休息15s，防止黑IP**********');
                     await $.wait(16 * 1000);
                 }
@@ -112,12 +110,12 @@ let state = '';
                 await $.wait(2 * 1000);
 
                 if (loginBack > 0) {
-                    PunchInback = 0 //重置上个账号的状态码
+                    PunchInback = 0//重置上个账号的状态码
                     log('开始获取报备列表...');
                     await PunchIn()
                     await $.wait(2 * 1000);
 
-                    if (PunchInback > 0) {
+                    if (PunchInback>0) {
                         log('开始报备返校...');
                         await doPunchIn()
                         await $.wait(2 * 1000);
@@ -134,7 +132,7 @@ let state = '';
     }
 
 })()
-.catch((e) => log(e))
+    .catch((e) => log(e))
     .finally(() => $.done())
 
 
@@ -181,15 +179,15 @@ function login(timeout = 3 * 1000) {
         }
 
 
-        request.post(url, async(error, response, data) => {
+        request.post(url, async (error, response, data) => {
             try {
                 let result = data == "undefined" ? await login() : JSON.parse(data);
 
                 //登录成功
-                if (result.code == 0) {
+                if (result.code == 0 ) {
 
                     jwsession = response.headers['jwsession']
-                        //储存jwsession
+                    //储存jwsession
                     setJwsession(jwsession)
                     loginBack = 1;
                     log(`登录成功`)
@@ -215,14 +213,15 @@ function login(timeout = 3 * 1000) {
  */
 function setJwsession(jwsession) {
 
-    fs.mkdir('.cache', function(err) {
+    fs.mkdir('.cache',function(err){
         if (err) {
 
             console.log("找到cache文件");
-        } else console.log("正在创建cache储存目录与文件...");
+        }
+        else console.log("正在创建cache储存目录与文件...");
     });
 
-    fs.writeFile('.cache/' + username + ".json", jwsession, function(err) {
+    fs.writeFile('.cache/' + username + ".json", jwsession,  function(err) {
         if (err) {
             return console.error(err);
         }
@@ -247,7 +246,7 @@ function PunchIn(timeout = 3 * 1000) {
             body: ``
         }
 
-        $.post(url, async(error, response, data) => {
+        $.post(url, async (error, response, data) => {
             //log(data)
             try {
                 let result = data == "undefined" ? await PunchIn() : JSON.parse(data);
@@ -267,22 +266,22 @@ function PunchIn(timeout = 3 * 1000) {
                 }
                 if (result.code == 0) {
                     id = result.data[0].id
-                    endDatetime = result.data[0].endDatetime
-                    state = result.data[0].state //state为2表示未返校，为5表示已返校，为4表示当前已超过返校时间
-                        //log(state)
-                    if (state == 5) {
+                    endDatetime =result.data[0].endDatetime
+                    state =result.data[0].state //state为2表示未返校，为5表示已返校，为4表示当前已超过返校时间
+                    //log(state)
+                    if (state==5){
                         log('🈚️ 暂无返校任务，跳过返校...')
                         wait = 1
                         status_code = 2
                         PunchInback = 0
-                    } else if (state == 2) {
+                    }else if(state==2){
                         log("✅ 找到未返校任务，开始返校...")
                         PunchInback = 1
-                        wait = 0
-                    } else if (state == 4) {
+                        wait=0
+                    }else if(state==4){
                         log("⚠️ 当前已超过返校时间，开始返校...")
                         PunchInback = 1
-                        wait = 0
+                        wait=0
                     }
 
                 }
@@ -316,16 +315,16 @@ function doPunchIn(timeout = 3 * 1000) {
 
         }
 
-        $.post(url, async(error, response, data) => {
+        $.post(url, async (error, response, data) => {
 
             try {
                 let result = data == "undefined" ? await doPunchIn() : JSON.parse(data);
 
                 //返校情况
-                if (result.code == 0) {
+                if (result.code == 0){
                     log("✅ 返校成功")
                     status_code = 1
-                } else {
+                } else{
                     log("❌ 返校失败")
                     status_code = 0
                 }
@@ -355,39 +354,37 @@ function getResult(timeout = 3 * 1000) {
 
 
 // ============================================变量检查============================================ \\
-async
-function Envs() {
-        if (wzxy) {
-            if (wzxy.indexOf("@") != -1 || wzxy.indexOf("&") != -1) {
-                wzxy.split("@" && "&").forEach((item) => {
-                    wzxyArr.push(item);
-                });
-            }
+async function Envs() {
+    if (wzxy) {
+        if (wzxy.indexOf("@") != -1 || wzxy.indexOf("&") != -1) {
+            wzxy.split("@"&&"&").forEach((item) => {
+                wzxyArr.push(item);
+            });
+        }
             // else if (wzxy.indexOf("\n") != -1) {
             //     wzxy.split("\n").forEach((item) => {
             //         wzxyArr.push(item);
             //     });
-            // }
-            else {
-                wzxyArr.push(wzxy);
-            }
-        } else {
-            log(`\n 未填写变量 wzxy`)
-            return;
+        // }
+        else {
+            wzxyArr.push(wzxy);
         }
-
-        return true;
+    } else {
+        log(`\n 未填写变量 wzxy`)
+        return;
     }
-    // ============================================发送消息============================================ \\
-async
-function SendMsg(msg) {
+
+    return true;
+}
+// ============================================发送消息============================================ \\
+async function SendMsg(msg) {
     if (!msg)
         return;
 
     if (Notify > 0) {
         if ($.isNode()) {
             var notify = require('./sendNotify');
-            await notify.sendNotify($.name, msg + `\n执行时间：${t()}\n`);
+            await notify.sendNotify($.name, msg+ `\n执行时间：${t()}}\n`);
         } else {
             $.msg(msg);
         }
@@ -419,7 +416,7 @@ function randomInt(min, max) {
 /**
  * 获取毫秒时间戳
  */
-function timestampMs() {
+function timestampMs(){
     return new Date().getTime();
 }
 
@@ -427,8 +424,8 @@ function timestampMs() {
  *
  * 获取秒时间戳
  */
-function timestampS() {
-    return Date.parse(new Date()) / 1000;
+function timestampS(){
+    return Date.parse(new Date())/1000;
 }
 
 /**
@@ -439,7 +436,7 @@ function poem(timeout = 3 * 1000) {
         let url = {
             url: `https://v1.jinrishici.com/all.json`
         }
-        $.get(url, async(err, resp, data) => {
+        $.get(url, async (err, resp, data) => {
             try {
                 data = JSON.parse(data)
                 log(`${data.content}  \n————《${data.origin}》${data.author}`);
@@ -457,15 +454,14 @@ function poem(timeout = 3 * 1000) {
  */
 function modify() {
 
-    fs.readFile('/ql/data/config/config.sh', 'utf8', function(err, dataStr) {
-        if (err) {
-            return log('读取文件失败！' + err)
-        } else {
-            var result = dataStr.replace(/regular/g, string);
-            fs.writeFile('/ql/data/config/config.sh', result, 'utf8', function(err) {
-                if (err) {
-                    return log(err);
-                }
+    fs.readFile('/ql/data/config/config.sh','utf8',function(err,dataStr){
+        if(err){
+            return log('读取文件失败！'+err)
+        }
+        else {
+            var result = dataStr.replace(/regular/g,string);
+            fs.writeFile('/ql/data/config/config.sh', result, 'utf8', function (err) {
+                if (err) {return log(err);}
             });
         }
     })
@@ -479,7 +475,7 @@ function getVersion(timeout = 3 * 1000) {
         let url = {
             url: `https://ghproxy.com/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/wzxy_bbfx.js`,
         }
-        $.get(url, async(err, resp, data) => {
+        $.get(url, async (err, resp, data) => {
             try {
                 scriptVersionLatest = data.match(/scriptVersion = "([\d\.]+)"/)[1]
             } catch (e) {
