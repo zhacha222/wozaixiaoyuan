@@ -384,7 +384,7 @@ async function SendMsg(msg) {
     if (Notify > 0) {
         if ($.isNode()) {
             var notify = require('./sendNotify');
-            await notify.sendNotify($.name, msg+ `\n执行时间：${t()}}\n`);
+            await notify.sendNotify($.name, msg+ `\n执行时间：${t()}\n`);
         } else {
             $.msg(msg);
         }
