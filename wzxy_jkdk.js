@@ -2,6 +2,9 @@
  作者QQ:1483081359 欢迎前来提交bug
  微信小程序：我在校园 健康打卡
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
+ 
+ 默认每天运行一次。如果不止一次，自己改定时，在打卡时间段内运行即可
+ 
 
  变量名称：wzxy
  变量值：  {
