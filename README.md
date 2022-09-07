@@ -47,7 +47,7 @@ wzxy
 **关于变量值中各参数的说明：**
 
  * `username` —— “我在校园”的账号，一般是你的手机号码
- * `password` —— “我在校园”的密码，忘记了打开小程序重新设置就行（建议四个英文+四个数字 类似“wzxy1234” 复杂了简单了可能都不行,改完密码运行脚本前不要再登录小程序）
+ * `password` —— “我在校园”的密码，忘记了打开小程序重新设置就行（推荐四个英文+四个数字，例如“wzxy1234”，改完密码后，在运行脚本前不要再登录小程序）
 
  * `qd_location` —— 签到位置的经纬度（wzxy_qd.js)
 
@@ -84,23 +84,22 @@ https://jingweidu.bmcx.com/
  
 ## 🔔通知方式：
 
-**在下面随便选一个自己喜欢的推送方式**
+**在下面随便选一个自己喜欢的推送方式，在配置文件`config.sh`中的`通知环境变量（大概第41行到121行）`填写通知变量**
 
-* Server酱  https://sct.ftqq.com
-* BARK 
-* Telegram 
-* 钉钉  https://developers.dingtalk.com/document/app/custom-robot-access
-* 企业微信机器人  https://work.weixin.qq.com/api/doc/90000/90136/91770
-* 企业微信应用  http://note.youdao.com/s/HMiudGkb
-* iGot聚合  https://wahao.github.io/Bark-MP-helper
-* Push Plus  http://www.pushplus.plus
-* go-cqhttp 
-* gotify
+|通知名称|通知渠道|推送方式|使用教程|
+|:---:|:---:|:---|:---|
+|[server酱](https://sct.ftqq.com)|微信（公众号）|一对一||
+|[BARK](https://github.com/Finb/Bark)|iOS（APP）|一对一||
+|[Telegram](https://core.telegram.org/bots/api)|TG（tg机器人）|一对一，一对多||
+|[dingtalk](https://developers.dingtalk.com/document/app/custom-robot-access)|钉钉（群聊机器人）|一对一，一对多||
+|[企业微信群机器人](https://work.weixin.qq.com/api/doc/90000/90136/91770)|企业微信（群聊机器人）|一对多||
+|[企业微信应用消息](http://note.youdao.com/s/HMiudGkb)|企业微信（类似公众号）|一对多|[查看](https://www.zc4g.cn/658.html)|
+|[iGot聚合](https://wahao.github.io/Bark-MP-helper)|Bark（ios），邮箱，微信|一对一，一对多||
+|[pushplus](http://www.pushplus.plus)|微信（公众号）|一对一||
+|[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)|QQ（QQ机器人）|一对一，一对多||
+|[gotify](https://gotify.net/docs/)|自建消息推送服务（ws）|一对一，一对多||
 
-
-**由于本人目前用的是企业微信通知，只写了这一个教程，其他通知的教程有空再写吧**
-
-**企业微信应用通知教程：https://www.zc4g.cn/658.html**
+下面是`企业微信应用`通知截图
 
 <img src="https://cdn.jsdelivr.net/gh/zhacha222/wozaixiaoyuan@e149d21fd4ae3e8cfef8654708c2fbe6fb54a17f/jpg/A97F963D4799767B81EDDD73A763BF19.jpg" width="270px" height="600px" alt="daka" align=center>
 
