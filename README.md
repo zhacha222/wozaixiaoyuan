@@ -6,7 +6,7 @@
 
 ## 📌须知：
 
-1.只支持青龙面板（本人青龙版本2.11.3），搭建教程自行百度
+1.只支持青龙面板（本人青龙版本2.10.13），搭建教程自行百度
 
 2.本库脚本通用 `wzxy`这一个变量
 
@@ -25,6 +25,10 @@
 ql repo https://github.com/zhacha222/wozaixiaoyuan.git  "wzxy_|sendNotify" "" "sendNotify"
 ```
 如果网络不好拉库失败，请自行添加拉库代理 `https://ghproxy.com/`
+
+	
+ <img src="https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan/blob/c4b7b5bafc9c5e9b346193927512d2dba37a6578/jpg/laku.png" width="949px" height="460px" alt="daka" align=center>
+ 
 
 ## 🔎环境变量：
 
@@ -45,6 +49,10 @@ wzxy
     "mark": "用户昵称"
         }
 ```
+
+	
+ <img src="https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan/blob/c4b7b5bafc9c5e9b346193927512d2dba37a6578/jpg/hjbl.png" width="951px" height="460px" alt="daka" align=center>
+
 
 
 **关于变量值中各参数的说明：**
@@ -90,6 +98,10 @@ https://jingweidu.bmcx.com/
 ## 🔔通知方式：
 
 **在下面随便选一个自己喜欢的推送方式，在配置文件`config.sh`中的`通知环境变量（大概第41行到121行）`配置**
+
+
+ <img src="https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan/blob/771f01a6a2228ee16f53ed193a923450624595e4/jpg/tz.png" width="951px" height="460px" alt="daka" align=center>
+ 
 
 |通知名称|通知渠道|推送方式|使用教程|
 |:---:|:---:|:---|:---|
