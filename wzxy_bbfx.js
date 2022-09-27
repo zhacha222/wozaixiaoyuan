@@ -2,9 +2,9 @@
  作者QQ:1483081359 欢迎前来提交bug
  微信小程序：我在校园 报备自动确认返校
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
- 
+
  建议每天23点50分运行一次，防止自己忘记点返校
- 
+
 
  变量名称：wzxy
  变量值：  {
@@ -17,8 +17,6 @@
         "jkdk_location": "133.333333,33.333333",
         "mark": "用户昵称"
         }
-
-
 
 
 
@@ -45,6 +43,7 @@
  ***工作日志：
  1.0.0 完成 的基本功能
  1.0.1 优化通知
+ 1.0.2 新增仅报备返校通知
 
 
  */
@@ -52,6 +51,7 @@
 
 //===============通知设置=================//
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
+const OnlyfaxiaoNotify = 0; //0为关闭仅返校成功通知，1为打开仅返校成功通知,默认为0
 ////////////////////////////////////////////
 
 const $ = new Env('报备自动确认返校');
@@ -60,8 +60,9 @@ const fs = require("fs");
 const request = require('request');
 const {log} = console;
 //////////////////////
-let scriptVersion = "1.0.1";
+let scriptVersion = "1.0.2";
 let scriptVersionLatest = '';
+let update_data = '';
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -91,7 +92,14 @@ let state = '';
 
             await poem();
             await getVersion();
+            await update_log();
+
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
+
+            if(scriptVersionLatest != scriptVersion){
+                log(`\n发现新版本！\n${update_data}`)
+            }
+
             log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
 
 
@@ -128,7 +136,14 @@ let state = '';
                     }
                 }
                 var resultlog = getResult()
-                msg += `返校用户：${mark}\n返校情况：${resultlog}\n\n`
+
+                if (OnlyfaxiaoNotify>0){
+                    if (status_code == 1  ){
+                        msg += `返校用户：${mark}\n返校情况：${resultlog}\n\n`
+                    }
+                }else {
+                    msg += `返校用户：${mark}\n返校情况：${resultlog}\n\n`
+                }
 
             }
 
@@ -456,6 +471,26 @@ function poem(timeout = 3 * 1000) {
 }
 
 /**
+ * 更新内容
+ */
+function update_log(timeout = 3 * 1000) {
+    return new Promise((resolve) => {
+        let url = {
+            url: `https://ghproxy.com/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/update_log/bbfx.txt`
+        }
+        request.get(url, async (err, resp, data) => {
+            try {
+                update_data = data
+            } catch (e) {
+                log(e, resp);
+            } finally {
+                resolve()
+            }
+        }, timeout)
+    })
+}
+
+/**
  * 修改配置文件
  */
 function modify() {
@@ -504,9 +539,9 @@ function t() {
     var strDate = date.getDate();
     //获取当前小时（0-23）
     var nowhour = date.getHours()
-        //获取当前分钟（0-59）
+    //获取当前分钟（0-59）
     var nowMinute = date.getMinutes()
-        //获取当前秒数(0-59)
+    //获取当前秒数(0-59)
     var nowSecond = date.getSeconds();
     // 添加分隔符“-”
     var seperator = "-";
