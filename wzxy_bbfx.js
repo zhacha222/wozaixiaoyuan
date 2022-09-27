@@ -20,6 +20,8 @@
 
 
 
+
+
  ***一些前提说明：
  1.只支持青龙面板
  2.本库脚本通用 `wzxy`这一个变量
@@ -43,7 +45,6 @@
  ***工作日志：
  1.0.0 完成 的基本功能
  1.0.1 优化通知
- 1.0.2 新增仅报备返校通知
 
 
  */
@@ -51,7 +52,7 @@
 
 //===============通知设置=================//
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
-const OnlyfaxiaoNotify = 0; //0为关闭仅返校成功通知，1为打开仅返校成功通知,默认为0
+const OnlyfaxiaoNotify = 1; //0为关闭仅返校成功通知，1为打开仅返校成功通知,默认为0
 ////////////////////////////////////////////
 
 const $ = new Env('报备自动确认返校');
@@ -62,7 +63,7 @@ const {log} = console;
 //////////////////////
 let scriptVersion = "1.0.2";
 let scriptVersionLatest = '';
-let update_data = '';
+let update_data = '1.0.2 新增仅返校成功通知'; //新版本更新内容
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -92,7 +93,7 @@ let state = '';
 
             await poem();
             await getVersion();
-            await update_log();
+            //await update_log();
 
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
 
@@ -519,6 +520,7 @@ function getVersion(timeout = 3 * 1000) {
         $.get(url, async (err, resp, data) => {
             try {
                 scriptVersionLatest = data.match(/scriptVersion = "([\d\.]+)"/)[1]
+                update_data = data.match(/update_data = "([\d\.]+)"/)[1]
             } catch (e) {
                 $.logErr(e, resp);
             } finally {
