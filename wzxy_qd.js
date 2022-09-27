@@ -2,11 +2,11 @@
  作者QQ:1483081359 欢迎前来提交bug
  微信小程序：我在校园 签到
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
- 
+
  适用于所有类型的签到，包括定位、蓝牙签到等···
  在签到发布后，运行一次此脚本即可
- 
- 
+
+
 
  变量名称：wzxy
  变量值：  {
@@ -47,11 +47,12 @@
  1.0.2 增加完整参数验证
  1.0.5 修复地址信息请求失败的bug
  1.0.6 优化通知
- 
+ 1.0.7 log增加新版本内容
+
 
  */
 //cron: 0
-    
+
 //===============通知设置=================//
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
 ////////////////////////////////////////////
@@ -63,8 +64,9 @@ const request = require('request');
 const {log} = console;
 
 //////////////////////
-let scriptVersion = "1.0.6";
+let scriptVersion = "1.0.7";
 let scriptVersionLatest = '';
+let update_data = "1.0.7 log增加新版本内容"; //新版本更新内容
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -96,7 +98,13 @@ let locat = '';
 
             await poem();
             await getVersion();
+            
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
+
+            if(scriptVersionLatest != scriptVersion){
+                log(`\n发现新版本,请拉库更新！\n${update_data}`)
+            }
+            
             log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
 
 
@@ -115,7 +123,7 @@ let locat = '';
                 password = content.password
                 location = content.qd_location
                 mark = content.mark
-                
+
                 log(`签到用户：${mark}`)
                 var checkBack = 0;
                 loginBack = 0;
@@ -548,6 +556,7 @@ function getVersion(timeout = 3 * 1000) {
         $.get(url, async (err, resp, data) => {
             try {
                 scriptVersionLatest = data.match(/scriptVersion = "([\d\.]+)"/)[1]
+                update_data = data.match(/update_data = "(.*?)"/)[1]
             } catch (e) {
                 $.logErr(e, resp);
             } finally {
@@ -568,9 +577,9 @@ function t() {
     var strDate = date.getDate();
     //获取当前小时（0-23）
     var nowhour = date.getHours()
-        //获取当前分钟（0-59）
+    //获取当前分钟（0-59）
     var nowMinute = date.getMinutes()
-        //获取当前秒数(0-59)
+    //获取当前秒数(0-59)
     var nowSecond = date.getSeconds();
     // 添加分隔符“-”
     var seperator = "-";
