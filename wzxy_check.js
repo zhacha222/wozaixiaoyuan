@@ -2,10 +2,10 @@
  作者QQ:1483081359 欢迎前来提交bug
  微信小程序：我在校园 账号检测
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
- 
+
  此脚本用于延长账号的有效时长，防止账号过期
  默认每天运行一次，如果你每天都需要频繁登录手机端，自己去改定时，每天多运行几次防止失效
- 
+
 
  变量名称：wzxy
  变量值：  {
@@ -46,6 +46,7 @@
  1.0.2 增加等待15s,防止黑ip
  1.0.5 适配青龙最新版
  1.0.6 优化通知
+ 1.0.7 log增加新版本内容
 
 
  */
@@ -78,8 +79,9 @@ const api = got.extend({
     retry: { limit: 0 },
 });
 //我在校园账号数据
-let scriptVersion = "1.0.6";
+let scriptVersion = "1.0.7";
 let scriptVersionLatest = '';
+let update_data = "1.0.7 log增加新版本内容"; //新版本更新内容
 let wzxyArr = [];
 let wait = 0;
 let checkBack = 0;
@@ -105,7 +107,13 @@ let eid = '';
 
             await poem();
             await getVersion();
+            
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
+            
+            if(scriptVersionLatest != scriptVersion){
+                log(`\n发现新版本,请拉库更新！\n${update_data}`)
+            }
+        
             log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
             //log(wzxyArr[0])
 
@@ -546,6 +554,7 @@ function getVersion(timeout = 3 * 1000) {
         $.get(url, async (err, resp, data) => {
             try {
                 scriptVersionLatest = data.match(/scriptVersion = "([\d\.]+)"/)[1]
+                update_data = data.match(/update_data = "(.*?)"/)[1]
             } catch (e) {
                 $.logErr(e, resp);
             } finally {
@@ -566,9 +575,9 @@ function t() {
     var strDate = date.getDate();
     //获取当前小时（0-23）
     var nowhour = date.getHours()
-        //获取当前分钟（0-59）
+    //获取当前分钟（0-59）
     var nowMinute = date.getMinutes()
-        //获取当前秒数(0-59)
+    //获取当前秒数(0-59)
     var nowSecond = date.getSeconds();
     // 添加分隔符“-”
     var seperator = "-";
