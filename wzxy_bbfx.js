@@ -61,7 +61,7 @@ const fs = require("fs");
 const request = require('request');
 const {log} = console;
 //////////////////////
-let scriptVersion = "1.0.1";
+let scriptVersion = "1.0.2";
 let scriptVersionLatest = '';
 let update_data = "1.0.2 新增仅返校成功通知"; //新版本更新内容
 //我在校园账号数据
@@ -93,12 +93,11 @@ let state = '';
 
             await poem();
             await getVersion();
-            //await update_log();
 
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
 
             if(scriptVersionLatest != scriptVersion){
-                log(`\n发现新版本！\n${update_data}`)
+                log(`\n发现新版本,请拉库更新！\n${update_data}`)
             }
 
             log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
@@ -462,26 +461,6 @@ function poem(timeout = 3 * 1000) {
             try {
                 data = JSON.parse(data)
                 log(`${data.content}  \n————《${data.origin}》${data.author}`);
-            } catch (e) {
-                log(e, resp);
-            } finally {
-                resolve()
-            }
-        }, timeout)
-    })
-}
-
-/**
- * 更新内容
- */
-function update_log(timeout = 3 * 1000) {
-    return new Promise((resolve) => {
-        let url = {
-            url: `https://ghproxy.com/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/update_log/bbfx.txt`
-        }
-        request.get(url, async (err, resp, data) => {
-            try {
-                update_data = data
             } catch (e) {
                 log(e, resp);
             } finally {
