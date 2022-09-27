@@ -2,9 +2,9 @@
  作者QQ:1483081359 欢迎前来提交bug
  微信小程序：我在校园 健康打卡
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
- 
+
  默认每天运行一次。如果不止一次，自己改定时，在打卡时间段内运行即可
- 
+
 
  变量名称：wzxy
  变量值：  {
@@ -46,6 +46,7 @@
  1.0.3 增加打卡Content-Type
  1.0.4 修复地址信息获取失败的bug
  1.0.5 优化通知
+ 1.0.6 log增加新版本内容
 
  */
 //cron: 5 0 * * *
@@ -60,8 +61,9 @@ const fs = require("fs");
 const request = require('request');
 const {log} = console;
 //////////////////////
-let scriptVersion = "1.0.5";
+let scriptVersion = "1.0.6";
 let scriptVersionLatest = '';
+let update_data = "1.0.6 log增加新版本内容"; //新版本更新内容
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -93,7 +95,13 @@ let locat = '';
 
             await poem();
             await getVersion();
+            
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
+
+            if(scriptVersionLatest != scriptVersion){
+                log(`\n发现新版本,请拉库更新！\n${update_data}`)
+            }
+            
             log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
 
 
@@ -529,6 +537,7 @@ function getVersion(timeout = 3 * 1000) {
         $.get(url, async (err, resp, data) => {
             try {
                 scriptVersionLatest = data.match(/scriptVersion = "([\d\.]+)"/)[1]
+                update_data = data.match(/update_data = "(.*?)"/)[1]
             } catch (e) {
                 $.logErr(e, resp);
             } finally {
@@ -549,9 +558,9 @@ function t() {
     var strDate = date.getDate();
     //获取当前小时（0-23）
     var nowhour = date.getHours()
-        //获取当前分钟（0-59）
+    //获取当前分钟（0-59）
     var nowMinute = date.getMinutes()
-        //获取当前秒数(0-59)
+    //获取当前秒数(0-59)
     var nowSecond = date.getSeconds();
     // 添加分隔符“-”
     var seperator = "-";
