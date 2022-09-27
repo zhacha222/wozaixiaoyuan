@@ -61,9 +61,9 @@ const fs = require("fs");
 const request = require('request');
 const {log} = console;
 //////////////////////
-let scriptVersion = "1.0.2";
+let scriptVersion = "1.0.1";
 let scriptVersionLatest = '';
-let update_data = '1.0.2 新增仅返校成功通知'; //新版本更新内容
+let update_data = "1.0.2 新增仅返校成功通知"; //新版本更新内容
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -520,7 +520,7 @@ function getVersion(timeout = 3 * 1000) {
         $.get(url, async (err, resp, data) => {
             try {
                 scriptVersionLatest = data.match(/scriptVersion = "([\d\.]+)"/)[1]
-                update_data = data.match(/update_data = "([\d\.]+)"/)[1]
+                update_data = data.match(/update_data = "(.*?)"/)[1]
             } catch (e) {
                 $.logErr(e, resp);
             } finally {
