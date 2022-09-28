@@ -43,7 +43,7 @@
  1.0.4 修复地址信息获取失败的bug
  1.0.5 优化通知
  1.0.6 log增加新版本内容
- 1.0.7 增加`仅通知打卡失败`模式，在脚本第57行修改开启
+ 1.0.7 增加`仅通知打卡失败`模式，可在脚本第53行修改开启
 
  */
 //cron: 5 0 * * *
@@ -61,7 +61,7 @@ const {log} = console;
 //////////////////////
 let scriptVersion = "1.0.7";
 let scriptVersionLatest = '';
-let update_data = "1.0.7 增加`仅通知打卡失败`模式，在脚本第57行修改开启"; //新版本更新内容
+let update_data = "1.0.7 增加`仅通知打卡失败`模式，可在脚本第53行修改开启"; //新版本更新内容
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
