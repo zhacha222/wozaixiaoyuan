@@ -2,9 +2,9 @@
  作者QQ:1483081359 欢迎前来提交bug
  微信小程序：我在校园 健康打卡
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
-
- 默认每天运行一次。如果不止一次，自己改定时，在打卡时间段内运行即可
-
+ 
+ cron: 5 0 * * *
+ 默认每天运行一次。如果不止一次，自己改定时，在自己的打卡时间段内运行即可
 
  变量名称：wzxy
  变量值：  {
@@ -28,18 +28,14 @@
  ***关于变量值中各参数的解释:
  username —— 手机号
  password —— 密码
-
  qd_location —— 签到 的经纬度（wzxy_qd.js)
-
  rjrb_answers —— 日检日报的 填空参数（wzxy_rjrb.js）
  rjrb_location —— 日检日报的 经纬度（wzxy_rjrb.js）
-
  jkdk_answers —— 健康签到的 填空参数（wzxy_jkdk.js）
  jkdk_location —— 健康签到的 经纬度（wzxy_jkdk.js）
-
  mark —— 用户昵称（不一定要真名，随便填都行,便于自己区分打卡用户）
 
- ***工作日志：
+ ***更新日志：
  1.0.0 完成健康打卡的基本功能
  1.0.1 增加等待15s,防止黑ip
  1.0.2 增加完整参数验证
@@ -47,12 +43,14 @@
  1.0.4 修复地址信息获取失败的bug
  1.0.5 优化通知
  1.0.6 log增加新版本内容
+ 1.0.7 增加`仅通知打卡失败`模式，在脚本第57行修改开启
 
  */
 //cron: 5 0 * * *
 
 //===============通知设置=================//
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
+const OnlyErrorNotify = 0; //0为关闭`仅通知打卡失败`模式，1为打开`仅通知打卡失败`模式,默认为0      
 ////////////////////////////////////////////
 
 const $ = new Env('健康打卡');
@@ -61,9 +59,9 @@ const fs = require("fs");
 const request = require('request');
 const {log} = console;
 //////////////////////
-let scriptVersion = "1.0.6";
+let scriptVersion = "1.0.7";
 let scriptVersionLatest = '';
-let update_data = "1.0.6 log增加新版本内容"; //新版本更新内容
+let update_data = "1.0.7 增加`仅通知打卡失败`模式，在脚本第57行修改开启"; //新版本更新内容
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -79,6 +77,7 @@ let sign_data = '';
 let answers = '';
 let status_code = 0;
 let locat = '';
+let fail = 0;
 
 
 !(async () => {
@@ -99,14 +98,13 @@ let locat = '';
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
 
             if(scriptVersionLatest != scriptVersion){
-                log(`\n发现新版本,请拉库更新！\n${update_data}`)
+                log(`\n发现新版本,请及时拉库更新！\n${update_data}`)
             }
             
             log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
 
 
             for (let index = 0; index < wzxyArr.length; index++) {
-
 
                 let num = index + 1
                 if (num >1 && wait == 0){
@@ -159,10 +157,25 @@ let locat = '';
                     }
                 }
                 var resultlog = getResult()
-                msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
+                
+                if (OnlyErrorNotify>0){
+                    if (status_code != 1 ){
+                        msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
+                        fail=fail+1
+                    }
+                }else {
+                        msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
+                }
 
             }
-
+            if (OnlyErrorNotify>0){
+                
+                if(fail==0){
+                    msg=`共${wzxyArr.length}个用户，全部打卡成功 ✅ `
+                }else{
+                    msg=`共${wzxyArr.length}个用户，❌ 失败${fail}个\n\n===========失败详情=============\n\n`+msg
+                }
+            }
             // log(msg);
             await SendMsg(msg);
         }
