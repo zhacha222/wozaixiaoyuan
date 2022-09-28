@@ -96,7 +96,7 @@ let state = '';
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
 
             if(scriptVersionLatest != scriptVersion){
-                log(`\n发现新版本,请拉库更新！\n${update_data}`)
+                log(`\n发现新版本,请及时拉库更新！\n${update_data}`)
             }
 
             log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
