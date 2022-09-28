@@ -180,7 +180,7 @@ let fail = 0;
             if (OnlyErrorNotify>0){
                 
                 if(fail==0){
-                    msg=`共${wzxyArr.length}个用户，全部返校成功 ✅ `
+                    msg=`共${wzxyArr.length}个用户，全部签到成功 ✅ `
                 }else{
                     msg=`共${wzxyArr.length}个用户，❌ 失败${fail}个\n\n===========失败详情=============\n\n`+msg
                 }
