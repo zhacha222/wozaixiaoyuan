@@ -3,10 +3,10 @@
  微信小程序：我在校园 签到
  github仓库：  https://github.com/zhacha222/wozaixiaoyuan
 
+ cron: 0
  适用于所有类型的签到，包括定位、蓝牙签到等···
- 在签到发布后，运行一次此脚本即可
-
-
+ 默认不自动运行，在签到发布后，需要手动运行一次此脚本
+ 当然，如果你有定时签到，也可以自己修改定时规则，定时运行该脚本
 
  变量名称：wzxy
  变量值：  {
@@ -22,24 +22,25 @@
 
 
  ***一些前提说明：
- 1.只支持青龙面板
- 2.本库脚本通用 `wzxy`这一个变量
- 3.脚本变量只推荐在青龙的【环境变量】页添加，有强迫症在config.sh中添加的如果出现问题自己解决
- 4.脚本通知方式采用青龙面板默认通知，请自行配置。
+  
+ 1.只支持青龙面板（本人青龙版本2.10.13），搭建教程自行百度
+ 2.本库脚本通用 wzxy这一个变量
+ 3.脚本变量只推荐在青龙的【环境变量】页添加，有强迫症在【配置文件】config.sh中添加的如果出现问题自己解决
+ 4.支持多用户，每一用户在【环境变量】单独新建变量wzxy，切勿一个变量内填写多个用户的参数
+ 5.脚本通知方式采用青龙面板默认通知，请在【配置文件】config.sh里配置
+ 6.关于各脚本的具体使用方法，请阅读脚本内的注释
+
 
  ***关于变量值中各参数的解释:
- username —— 手机号
- password —— 密码
-
- qd_location —— 签到 的经纬度（wzxy_qd.js)
-
- rjrb_answers —— 日检日报的 填空参数（wzxy_rjrb.js）
- rjrb_location —— 日检日报的 经纬度（wzxy_rjrb.js）
-
- jkdk_answers —— 健康签到的 填空参数（wzxy_jkdk.js）
- jkdk_location —— 健康签到的 经纬度（wzxy_jkdk.js）
-
- mark —— 用户昵称（不一定要真名，随便填都行,便于自己区分打卡用户）
+  
+ username ———————— 手机号
+ password —————————密码
+ qd_location ————— 签到的`经纬度`      （wzxy_qd.js)
+ rjrb_answers —————日检日报的`填空参数`（wzxy_rjrb.js）
+ rjrb_location ————日检日报的`经纬度`  （wzxy_rjrb.js）
+ jkdk_answers ———— 健康签到的`填空参数`（wzxy_jkdk.js）
+ jkdk_location ————健康签到的`经纬度`  （wzxy_jkdk.js）
+ mark —————————————用户昵称（不一定要真名，随便填都行,便于自己区分打卡用户）
 
  工作日志：
  1.0.0 完成签到的基本功能
@@ -48,6 +49,7 @@
  1.0.5 修复地址信息请求失败的bug
  1.0.6 优化通知
  1.0.7 log增加新版本内容
+ 1.0.8 增加`仅通知签到失败`模式，在脚本第60行修改开启
 
 
  */
@@ -55,6 +57,7 @@
 
 //===============通知设置=================//
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
+const OnlyErrorNotify = 0; //0为关闭`仅通知签到失败`模式，1为打开`仅通知签到失败`模式,默认为0   
 ////////////////////////////////////////////
 
 const $ = new Env('我在校园签到');
@@ -64,9 +67,9 @@ const request = require('request');
 const {log} = console;
 
 //////////////////////
-let scriptVersion = "1.0.7";
+let scriptVersion = "1.0.8";
 let scriptVersionLatest = '';
-let update_data = "1.0.7 log增加新版本内容"; //新版本更新内容
+let update_data = "1.0.8 增加`仅通知签到失败`模式，在脚本第60行修改开启"; //新版本更新内容
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -83,6 +86,7 @@ let id = '';
 let sign_data = '';
 let status_code = 0;
 let locat = '';
+let fail = 0;
 
 !(async () => {
     if (typeof $request !== "undefined") {
@@ -162,7 +166,24 @@ let locat = '';
                     }
                 }
                 var resultlog = getResult()
-                msg += `签到用户：${mark}\n签到情况：${resultlog}\n\n`
+                
+                if (OnlyErrorNotify>0){
+                    if (status_code != 1 ){
+                        msg += `签到用户：${mark}\n签到情况：${resultlog}\n\n`
+                        fail=fail+1
+                    }
+                }else {
+                        msg += `签到用户：${mark}\n签到情况：${resultlog}\n\n`
+                }
+
+            }
+            if (OnlyErrorNotify>0){
+                
+                if(fail==0){
+                    msg=`共${wzxyArr.length}个用户，全部返校成功 ✅ `
+                }else{
+                    msg=`共${wzxyArr.length}个用户，❌ 失败${fail}个\n\n===========失败详情=============\n\n`+msg
+                }
             }
 
             // log(msg);
