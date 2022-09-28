@@ -73,7 +73,7 @@ const {log} = console;
 //////////////////////
 let scriptVersion = "1.1.1";
 let scriptVersionLatest = '';
-let update_data = "1.1.1 增加`仅通知打卡失败`模式，在脚本第65行修改开启"; //新版本更新内容
+let update_data = "1.1.1 增加`仅通知打卡失败`模式，可在脚本第65行修改开启"; //新版本更新内容
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -112,7 +112,7 @@ let fail = 0;
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
 
             if(scriptVersionLatest != scriptVersion){
-                log(`\n发现新版本,请拉库更新！\n${update_data}`)
+                log(`\n发现新版本,请及时拉库更新！\n${update_data}`)
             }
 
             log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
