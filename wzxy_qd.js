@@ -1,28 +1,23 @@
 /**
- 作者QQ:1483081359 欢迎前来提交bug
- 微信小程序：我在校园 签到
- github仓库：  https://github.com/zhacha222/wozaixiaoyuan
-
- cron: 0
- 适用于所有类型的签到，包括定位、蓝牙签到等···
- 默认不自动运行，在签到发布后，需要手动运行一次此脚本
- 当然，如果你有定时签到，也可以自己修改定时规则，定时运行该脚本
-
- 变量名称：wzxy
- 变量值：  {
-        "username": "手机号",
-        "password": "密码",
-        "qd_location": "133.333333,33.333333",
-        "rjrb_answers": ["0","0"],
-        "rjrb_location": "133.333333,33.333333",
-        "jkdk_answers": ["0","无","1","0","36.2","没有","1","1","2"],
-        "jkdk_location": "133.333333,33.333333",
-        "mark": "用户昵称"
-        }
-
+* 作者QQ: 1483081359 欢迎前来提交bug
+* github仓库：https://github.com/zhacha222/wozaixiaoyuan
+* 微信小程序：我在校园 签到
+* 脚本说明：适用于我在校园所有类型的签到，包括定位、蓝牙签到等···
+* 默认定时：默认不自动运行，在签到发布后，需要手动运行一次此脚本（当然，如果你有定时的签到，也可以自己去修改定时规则，在签到时间内定时运行该脚本即可）
+* cron: 0
+* 变量名称：wzxy
+* 变量值：  {
+    "username": "手机号",
+    "password": "密码",
+    "qd_location": "133.333333,33.333333",
+    "rjrb_answers": ["0","0"],
+    "rjrb_location": "133.333333,33.333333",
+    "jkdk_answers": ["0","无","1","0","36.2","没有","1","1","2"],
+    "jkdk_location": "133.333333,33.333333",
+    "mark": "用户昵称"
+   }
 
  ***一些前提说明：
-  
  1.只支持青龙面板（本人青龙版本2.10.13），搭建教程自行百度
  2.本库脚本通用 wzxy这一个变量
  3.脚本变量只推荐在青龙的【环境变量】页添加，有强迫症在【配置文件】config.sh中添加的如果出现问题自己解决
@@ -30,9 +25,7 @@
  5.脚本通知方式采用青龙面板默认通知，请在【配置文件】config.sh里配置
  6.关于各脚本的具体使用方法，请阅读脚本内的注释
 
-
  ***关于变量值中各参数的解释:
-  
  username ———————— 手机号
  password —————————密码
  qd_location ————— 签到的`经纬度`      （wzxy_qd.js)
@@ -42,16 +35,15 @@
  jkdk_location ————健康签到的`经纬度`  （wzxy_jkdk.js）
  mark —————————————用户昵称（不一定要真名，随便填都行,便于自己区分打卡用户）
 
- 工作日志：
+ 更新日志：
  1.0.0 完成签到的基本功能
  1.0.1 增加等待15s,防止黑ip
  1.0.2 增加完整参数验证
  1.0.5 修复地址信息请求失败的bug
  1.0.6 优化通知
  1.0.7 log增加新版本内容
- 1.0.8 增加`仅通知签到失败`模式，在脚本第60行修改开启
-
-
+ 1.0.8 增加`仅通知签到失败`模式，在脚本第52行修改开启
+ 
  */
 //cron: 0
 
@@ -69,7 +61,7 @@ const {log} = console;
 //////////////////////
 let scriptVersion = "1.0.8";
 let scriptVersionLatest = '';
-let update_data = "1.0.8 增加`仅通知签到失败`模式，可在脚本第60行修改开启"; //新版本更新内容
+let update_data = "1.0.8 增加`仅通知签到失败`模式，可在脚本第52行修改开启"; //新版本更新内容
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -102,13 +94,13 @@ let fail = 0;
 
             await poem();
             await getVersion();
-            
+
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
 
             if(scriptVersionLatest != scriptVersion){
                 log(`\n发现新版本,请及时拉库更新！\n${update_data}`)
             }
-            
+
             log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
 
 
@@ -166,19 +158,19 @@ let fail = 0;
                     }
                 }
                 var resultlog = getResult()
-                
+
                 if (OnlyErrorNotify>0){
                     if (status_code != 1 ){
                         msg += `签到用户：${mark}\n签到情况：${resultlog}\n\n`
                         fail=fail+1
                     }
                 }else {
-                        msg += `签到用户：${mark}\n签到情况：${resultlog}\n\n`
+                    msg += `签到用户：${mark}\n签到情况：${resultlog}\n\n`
                 }
 
             }
             if (OnlyErrorNotify>0){
-                
+
                 if(fail==0){
                     msg=`共${wzxyArr.length}个用户，全部签到成功 ✅ `
                 }else{
