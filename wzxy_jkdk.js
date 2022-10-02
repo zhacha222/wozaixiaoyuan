@@ -1,13 +1,12 @@
 /**
- 作者QQ:1483081359 欢迎前来提交bug
- 微信小程序：我在校园 健康打卡
- github仓库：  https://github.com/zhacha222/wozaixiaoyuan
- 
- cron: 5 0 * * *
- 默认每天运行一次。如果不止一次，自己改定时，在自己的打卡时间段内运行即可
-
- 变量名称：wzxy
- 变量值：  {
+* 作者QQ: 1483081359 欢迎前来提交bug
+* github仓库：https://github.com/zhacha222/wozaixiaoyuan
+* 微信小程序：我在校园 健康打卡
+* 脚本说明：如果你每天的健康打卡次数不止一次，自己去修改定时，在自己的打卡时间段内运行即可
+* 默认定时：每天凌晨 0点5分 运行一次
+* cron: 5 0 * * *
+* 变量名称：wzxy
+* 变量值：  {
         "username": "手机号",
         "password": "密码",
         "qd_location": "133.333333,33.333333",
@@ -16,11 +15,9 @@
         "jkdk_answers": ["0","无","1","0","36.2","没有","1","1","2"],
         "jkdk_location": "133.333333,33.333333",
         "mark": "用户昵称"
-        }
-
+       }
 
  ***一些前提说明：
-  
  1.只支持青龙面板（本人青龙版本2.10.13），搭建教程自行百度
  2.本库脚本通用 wzxy这一个变量
  3.脚本变量只推荐在青龙的【环境变量】页添加，有强迫症在【配置文件】config.sh中添加的如果出现问题自己解决
@@ -28,9 +25,7 @@
  5.脚本通知方式采用青龙面板默认通知，请在【配置文件】config.sh里配置
  6.关于各脚本的具体使用方法，请阅读脚本内的注释
 
-
  ***关于变量值中各参数的解释:
-  
  username ———————— 手机号
  password —————————密码
  qd_location ————— 签到的`经纬度`      （wzxy_qd.js)
@@ -48,7 +43,7 @@
  1.0.4 修复地址信息获取失败的bug
  1.0.5 优化通知
  1.0.6 log增加新版本内容
- 1.0.7 增加`仅通知打卡失败`模式，可在脚本第58行修改开启
+ 1.0.7 增加`仅通知打卡失败`模式，可在脚本第54行修改开启
 
  */
 //cron: 5 0 * * *
@@ -66,7 +61,7 @@ const {log} = console;
 //////////////////////
 let scriptVersion = "1.0.7";
 let scriptVersionLatest = '';
-let update_data = "1.0.7 增加`仅通知打卡失败`模式，可在脚本第58行修改开启"; //新版本更新内容
+let update_data = "1.0.7 增加`仅通知打卡失败`模式，可在脚本第54行修改开启"; //新版本更新内容
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -99,13 +94,13 @@ let fail = 0;
 
             await poem();
             await getVersion();
-            
+
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
 
             if(scriptVersionLatest != scriptVersion){
                 log(`\n发现新版本,请及时拉库更新！\n${update_data}`)
             }
-            
+
             log(`\n=================== 共找到 ${wzxyArr.length} 个账号 ===================`)
 
 
@@ -162,19 +157,19 @@ let fail = 0;
                     }
                 }
                 var resultlog = getResult()
-                
+
                 if (OnlyErrorNotify>0){
                     if (status_code != 1 ){
                         msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
                         fail=fail+1
                     }
                 }else {
-                        msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
+                    msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
                 }
 
             }
             if (OnlyErrorNotify>0){
-                
+
                 if(fail==0){
                     msg=`共${wzxyArr.length}个用户，全部打卡成功 ✅ `
                 }else{
