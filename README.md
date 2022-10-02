@@ -1,11 +1,10 @@
 # 我在校园 青龙面板
 
-不懂的可以加交流群问，有bug也加群说，看到了就会回，群号：744087145
+### **开源项目，不接受任何打赏，谢谢。**
+
+### **不懂的可以加交流群问，有bug也加群说，看到了就会回，群号：744087145** 
 
 <img src="https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan/raw/main/jpg/IMG_1344.JPG" width="375px" height="667px" alt="daka" align=center>
-
-
-### **开源项目，不接受任何打赏，谢谢。**
 
 ## 📌须知：
 
