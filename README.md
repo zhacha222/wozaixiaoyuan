@@ -4,7 +4,7 @@
 
 ### **不懂的可以加交流群问，有bug也加群说，看到了就会回，群号：744087145** 
 
-<img src="https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan/raw/main/jpg/IMG_1344.JPG" width="375px" height="667px" alt="daka" align=center>
+<img src="https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan/blob/48e17c4e2be33b5d74e6c31705ee85a3d0f5af68/jpg/IMG_1344.JPG" width="375px" height="667px" alt="daka" align=center>
 
 ## 📌须知：
 
