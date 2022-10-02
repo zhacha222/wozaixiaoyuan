@@ -1,13 +1,12 @@
 /**
- 作者QQ:1483081359 欢迎前来提交bug
- 微信小程序：我在校园 日检日报
- github仓库：  https://github.com/zhacha222/wozaixiaoyuan
- 
- cron: 5 8,16 * * *
- 默认每天运行两次。如果打卡不止两次，自己改定时，在打卡时间段内运行即可
-
- 变量名称：wzxy
- 变量值：  {
+* 作者QQ: 1483081359 欢迎前来提交bug
+* github仓库：https://github.com/zhacha222/wozaixiaoyuan
+* 微信小程序：我在校园 日检日报
+* 脚本说明：如果打卡不止两次，自己去修改改定时，在打卡时间段内运行该脚本即可
+* 默认定时：默认每天 8点5分 和 16点5分 运行两次。
+* cron: 5 8,16 * * *
+* 变量名称：wzxy
+* 变量值：  {
         "username": "手机号",
         "password": "密码",
         "qd_location": "133.333333,33.333333",
@@ -18,9 +17,7 @@
         "mark": "用户昵称"
         }
 
-
  ***一些前提说明：
-  
  1.只支持青龙面板（本人青龙版本2.10.13），搭建教程自行百度
  2.本库脚本通用 wzxy这一个变量
  3.脚本变量只推荐在青龙的【环境变量】页添加，有强迫症在【配置文件】config.sh中添加的如果出现问题自己解决
@@ -28,9 +25,7 @@
  5.脚本通知方式采用青龙面板默认通知，请在【配置文件】config.sh里配置
  6.关于各脚本的具体使用方法，请阅读脚本内的注释
 
-
  ***关于变量值中各参数的解释:
-  
  username ———————— 手机号
  password —————————密码
  qd_location ————— 签到的`经纬度`      （wzxy_qd.js)
@@ -42,7 +37,7 @@
 
 
  ***更新日志：
-  
+
  1.0.0 完成日检日报的基本功能
  1.0.1 修复seq识别出错的bug
  1.0.2 增加等待15s,防止黑ip
@@ -53,13 +48,11 @@
  1.0.8 修复地址信息请求失败的bug
  1.0.9 优化通知
  1.1.0 log增加新版本内容
- 1.1.1 增加`仅通知打卡失败`模式，在脚本第65行修改开启
- 
+ 1.1.1 增加`仅通知打卡失败`模式，在脚本第58行修改开启
 
  */
-
-
 //cron: 5 8,16 * * *
+    
 //===============通知设置=================//
 const Notify = 1;  //0为关闭通知，1为打开通知,默认为1      
 const OnlyErrorNotify = 0; //0为关闭`仅通知打卡失败`模式，1为打开`仅通知打卡失败`模式,默认为0      
@@ -73,7 +66,7 @@ const {log} = console;
 //////////////////////
 let scriptVersion = "1.1.1";
 let scriptVersionLatest = '';
-let update_data = "1.1.1 增加`仅通知打卡失败`模式，可在脚本第65行修改开启"; //新版本更新内容
+let update_data = "1.1.1 增加`仅通知打卡失败`模式，可在脚本第58行修改开启"; //新版本更新内容
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -172,20 +165,20 @@ let fail = 0;
                     }
                 }
                 var resultlog = getResult()
-                
-                
+
+
                 if (OnlyErrorNotify>0){
                     if (status_code != 1 ){
                         msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
                         fail=fail+1
                     }
                 }else {
-                        msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
+                    msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
                 }
 
             }
             if (OnlyErrorNotify>0){
-                
+
                 if(fail==0){
                     msg=`共${wzxyArr.length}个用户，全部打卡成功 ✅ `
                 }else{
