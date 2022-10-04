@@ -4,7 +4,7 @@
 
 ### **不懂的可以加交流群问，有bug也加群说，看到了就会回，群号：744087145** 
 
-<img src="https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan/blob/48e17c4e2be33b5d74e6c31705ee85a3d0f5af68/jpg/IMG_1344.JPG" width="375px" height="667px" alt="daka" align=center>
+<img src="https://cdn.jsdelivr.net/gh/zhacha222/wozaixiaoyuan@a6bfcc8ca55c2c0a6b22e59c75d12fd8f04395c4/jpg/IMG_1344.JPG" width="375px" height="667px" alt="daka" align=center>
 
 ## 📌须知：
 
@@ -19,6 +19,10 @@
 5.脚本通知方式采用`青龙面板默认通知`，请在【配置文件】`config.sh`里配置
 
 6.关于各脚本的具体使用方法，请阅读脚本内的注释
+
+7.本人“我在校园”版本为 `0.9.3`（我的—设置—关于我们—版本号）,有的学校可能用的是新版我在校园，请注意！此脚本不适用新版我在校园
+
+ <img src="https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan/raw/a6bfcc8ca55c2c0a6b22e59c75d12fd8f04395c4/jpg/C1F26C7C1B84EA696F2F50C5B3AE58FC.png" alt="daka" align=center>
 
 
 ## 📍拉库：
