@@ -1,12 +1,12 @@
 /**
-* 作者QQ: 1483081359 欢迎前来提交bug
-* github仓库：https://github.com/zhacha222/wozaixiaoyuan
-* 微信小程序：我在校园 健康打卡
-* 脚本说明：如果你每天的健康打卡次数不止一次，自己去修改定时，在自己的打卡时间段内运行即可
-* 默认定时：每天凌晨 0点5分 运行一次
-* cron: 5 0 * * *
-* 变量名称：wzxy
-* 变量值：  {
+ * 作者QQ: 1483081359 欢迎前来提交bug
+ * github仓库：https://github.com/zhacha222/wozaixiaoyuan
+ * 微信小程序：我在校园 健康打卡
+ * 脚本说明：如果你每天的健康打卡次数不止一次，自己去修改定时，在自己的打卡时间段内运行即可
+ * 默认定时：每天凌晨 0点5分 运行一次
+ * cron: 5 0 * * *
+ * 变量名称：wzxy
+ * 变量值：  {
         "username": "手机号",
         "password": "密码",
         "qd_location": "133.333333,33.333333",
@@ -44,24 +44,27 @@
  1.0.5 优化通知
  1.0.6 log增加新版本内容
  1.0.7 增加`仅通知打卡失败`模式，可在脚本第54行修改开启
+ 1.0.8 适配新版健康打卡
 
  */
-//cron: 5 0 * * * 
+//cron: 5 0 * * *
 
 //===============通知设置=================//
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
-const OnlyErrorNotify = 0; //0为关闭`仅通知打卡失败`模式，1为打开`仅通知打卡失败`模式,默认为0      
+const OnlyErrorNotify = 0; //0为关闭`仅通知打卡失败`模式，1为打开`仅通知打卡失败`模式,默认为0
 ////////////////////////////////////////////
 
 const $ = new Env('健康打卡');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const fs = require("fs");
 const request = require('request');
-const {log} = console;
+const {
+    log
+} = console;
 //////////////////////
-let scriptVersion = "1.0.7";
+let scriptVersion = "1.0.8";
 let scriptVersionLatest = '';
-let update_data = "1.0.7 增加`仅通知打卡失败`模式，可在脚本第54行修改开启"; //新版本更新内容
+let update_data = "1.0.8 适配新版健康打卡"; //新版本更新内容
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -70,10 +73,12 @@ let checkBack = 0;
 let loginBack = 0;
 let PunchInBack = 0;
 let requestAddressBack = 0;
+let ver = ``;
 let msg = '';
+let id = '';
 let jwsession = '';
 let location = '';
-let sign_data = '';
+let sign_data = {};
 let answers = '';
 let status_code = 0;
 let locat = '';
@@ -97,7 +102,7 @@ let fail = 0;
 
             log(`\n============ 当前版本：${scriptVersion}  最新版本：${scriptVersionLatest} ============`)
 
-            if(scriptVersionLatest != scriptVersion){
+            if (scriptVersionLatest != scriptVersion) {
                 log(`\n发现新版本,请及时拉库更新！\n${update_data}`)
             }
 
@@ -107,9 +112,9 @@ let fail = 0;
             for (let index = 0; index < wzxyArr.length; index++) {
 
                 let num = index + 1
-                if (num >1 && wait == 0){
+                if (num > 1 && wait == 0) {
                     log('**********休息15s，防止黑IP**********');
-                    await $.wait(16 * 1000);
+                    await $.wait(15 * 1000);
                 }
                 log(`\n========= 开始【第 ${num} 个账号】=========\n`)
                 data = wzxyArr[index];
@@ -117,63 +122,103 @@ let fail = 0;
                 username = content.username
                 password = content.password
                 location = content.jkdk_location
-                answers = JSON.stringify(content.jkdk_answers)
+                answers = content.jkdk_answers
                 mark = content.mark
                 log(`打卡用户：${mark}`)
+
                 var checkBack = 0;
                 loginBack = 0;
                 locat = location.split(',')
-                if (!locat[0] || !locat[1]){
+                if (!locat[0] || !locat[1]) {
                     log('未填写jkdk_location，跳过打卡');
                     var checkBack = 1
                     status_code = 6
                     wait = 1
                 }
+
                 if (checkBack == 0) {
+                    ver = ``
                     log('开始检查jwsession是否存在...');
                     await checkJwsession()
                     await $.wait(2 * 1000);
 
                     if (loginBack > 0) {
 
-                        log('开始获取打卡列表...');
-                        await PunchIn()
+                        log('开始检测打卡类型...');
+                        await new_or_old()
                         await $.wait(2 * 1000);
 
-                        if (PunchInBack > 0) {
-                            log('正在请求地址信息...');
-                            await requestAddress()
+                        if (ver == `old`) {
+                            PunchInBack = 0
+                            log('开始获取打卡列表...');
+                            await PunchIn()
                             await $.wait(2 * 1000);
 
-                            if (requestAddressBack) {
-                                log('开始健康打卡...');
-                                await doPunchIn()
+                            if (PunchInBack > 0) {
+                                requestAddressBack = 0
+                                log('正在请求地址信息...');
+                                await requestAddress()
                                 await $.wait(2 * 1000);
+
+                                if (requestAddressBack) {
+                                    log('开始健康打卡...');
+                                    await doPunchIn()
+                                    await $.wait(2 * 1000);
+
+                                }
 
                             }
 
-                        }
+                        } else if (ver == `new`) {
 
+
+                            PunchInBack = 0
+                            log('开始获取打卡列表...');
+                            await PunchIn_new()
+                            await $.wait(2 * 1000);
+                            if (PunchInBack > 0) {
+                                requestAddressBack = 0
+                                log('正在请求地址信息...');
+                                await requestAddress_new()
+                                await $.wait(2 * 1000);
+                                for (let index = 0; index < answers.length; index++) {
+                                i = index + 1
+                                sign_data[`${`t` + i}`] = answers[index]
+                            }
+                            sign_data[`type`] = 0
+                            sign_data[`locationMode`] = 0
+                            sign_data[`locationType`] = 0
+
+                                if (requestAddressBack > 0) {
+                                    log('开始健康打卡...');
+                                    await doPunchIn_new()
+                                    await $.wait(2 * 1000);
+                                }
+
+
+                            }
+                        }
                     }
+
                 }
                 var resultlog = getResult()
 
-                if (OnlyErrorNotify>0){
-                    if (status_code != 1 ){
+                if (OnlyErrorNotify > 0) {
+                    if (status_code != 1) {
                         msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
-                        fail=fail+1
+                        fail = fail + 1
                     }
-                }else {
+                } else {
                     msg += `打卡用户：${mark}\n打卡情况：${resultlog}\n\n`
                 }
 
             }
-            if (OnlyErrorNotify>0){
+            if (OnlyErrorNotify > 0) {
 
-                if(fail==0){
-                    msg=`共${wzxyArr.length}个用户，全部打卡成功 ✅ `
-                }else{
-                    msg=`共${wzxyArr.length}个用户，❌ 失败${fail}个\n\n===========失败详情=============\n\n`+msg
+                if (fail == 0) {
+                    msg = `共${wzxyArr.length}个用户，全部打卡成功 ✅ `
+                } else {
+                    msg = `共${wzxyArr.length}个用户，❌ 失败${fail}个\n\n===========失败详情=============\n\n` + msg
                 }
             }
             // log(msg);
@@ -182,7 +227,7 @@ let fail = 0;
     }
 
 })()
-    .catch((e) => log(e))
+.catch((e) => log(e))
     .finally(() => $.done())
 
 
@@ -234,7 +279,7 @@ function login(timeout = 3 * 1000) {
                 let result = data == "undefined" ? await login() : JSON.parse(data);
 
                 //登录成功
-                if (result.code == 0 ) {
+                if (result.code == 0) {
 
                     jwsession = response.headers['jwsession']
                     //储存jwsession
@@ -263,15 +308,14 @@ function login(timeout = 3 * 1000) {
  */
 function setJwsession(jwsession) {
 
-    fs.mkdir('.cache',function(err){
+    fs.mkdir('.cache', function(err) {
         if (err) {
 
             console.log("找到cache文件");
-        }
-        else console.log("正在创建cache储存目录与文件...");
+        } else console.log("正在创建cache储存目录与文件...");
     });
 
-    fs.writeFile('.cache/' + username + ".json", jwsession,  function(err) {
+    fs.writeFile('.cache/' + username + ".json", jwsession, function(err) {
         if (err) {
             return console.error(err);
         }
@@ -280,6 +324,64 @@ function setJwsession(jwsession) {
 
 }
 
+/**
+ * 新老版本判断
+ */
+function new_or_old(timeout = 3 * 1000) {
+    return new Promise((resolve) => {
+
+        let url = {
+            url: "https://gw.wozaixiaoyuan.com/health/mobile/health/getBatch",
+            headers: {
+                'jwsession': jwsession,
+            },
+            data: ''
+        }
+        //log(url)
+        $.get(url, async (error, response, data) => {
+            // log(response)
+            try {
+                let result = data == "undefined" ? await PunchIn() : JSON.parse(data);
+                //log(result)
+                if (result.code == 103) {
+                    log('jwsession 无效，尝试账号密码登录...')
+                    status_code = 4;
+                    PunchInBack = 0;
+                    loginBack = 0;
+                    await login()
+                    await $.wait(2 * 1000);
+                    if (loginBack > 0) {
+                        log('重新开始检测打卡类型...');
+                        await new_or_old()
+                        await $.wait(2 * 1000)
+                        return
+                    }
+                } else if (result.code == 0) {
+
+                    if (!result.data.list[0]) {
+                        ver = `old`
+                        log(`您是旧版健康打卡`)
+                    } else if (result.data.list[0]) {
+                        ver = `new`
+                        log(`您是新版健康打卡`)
+                    }
+
+                } else {
+                    log(`❌ 获取失败，原因：${error}`)
+                    PunchInBack = 0
+                }
+
+            } catch (e) {
+                log(e)
+            } finally {
+                resolve();
+            }
+        }, timeout)
+    })
+}
+
+
+// ============================================ 老版打卡 ============================================ \\
 
 /**
  * 获取打卡列表，判断当前打卡时间段与打卡情况，符合条件则自动进行打卡
@@ -347,10 +449,11 @@ function requestAddress(timeout = 3 * 1000) {
                 if (result.status == 0) {
                     log(`地址信息获取成功`);
                     timestampMs()
-                    try {town=result.result.address_reference.town.title}catch (e) {town=``}
-                    try {street=result.result.address_reference.street.title}catch (e) {street=``}
-                    _data =`answers=${answers}&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${result.result.address_component.city}&district=${result.result.address_component.district}&province=${result.result.address_component.province}&township=${town}&street=${street}&areacode=${result.result.ad_info.adcode}&towncode="0"&citycode="0"&timestampHeader=${new Date().getTime()}`
+                    town = result.result.address_reference.town.title || "";
+                    street = result.result.address_reference.street.title || "";
+                    _data = `answers=${JSON.stringify(answers)}&latitude=${location[1]}&longitude=${location[0]}&country=中国&city=${result.result.address_component.city}&district=${result.result.address_component.district}&province=${result.result.address_component.province}&township=${town}&street=${street}&areacode=${result.result.ad_info.adcode}&towncode="0"&citycode="0"&timestampHeader=${new Date().getTime()}`
                     sign_data = encodeURI(_data)
+                    //log(_data)
                     requestAddressBack = 1
                 } else {
                     log(`❌ 地址信息获取失败`)
@@ -388,16 +491,184 @@ function doPunchIn(timeout = 3 * 1000) {
                 let result = data == "undefined" ? await doPunchIn() : JSON.parse(data);
 
                 //打卡情况
-                if (result.code == 0){
+                if (result.code == 0) {
                     log("✅ 打卡成功")
                     status_code = 1
                 }
-                if (result.code == 1 && result.message == `今日健康打卡已结束`){
+                if (result.code == 1 && result.message == `今日健康打卡已结束`) {
                     log("❌ 打卡失败，当前不在打卡时间段内")
                     status_code = 3
                 }
                 if (result.code != 0) {
-                    log("❌ 打卡失败，原因："+data)
+                    log("❌ 打卡失败，原因：" + data)
+                }
+
+            } catch (e) {
+                log(e)
+            } finally {
+                resolve();
+            }
+        }, timeout)
+    })
+}
+
+
+
+// ============================================ 新版打卡 ============================================ \\
+
+/**
+ * 获取打卡列表，判断当前打卡时间段与打卡情况，符合条件则自动进行打卡
+ */
+function PunchIn_new(timeout = 3 * 1000) {
+    return new Promise((resolve) => {
+
+        let url = {
+            url: "https://gw.wozaixiaoyuan.com/health/mobile/health/getBatch",
+            headers: {
+                'jwsession': jwsession,
+            },
+            data: ''
+        }
+        //log(url)
+        $.get(url, async (error, response, data) => {
+            // log(response)
+            try {
+                let result = data == "undefined" ? await PunchIn_new() : JSON.parse(data);
+
+                if (result.code == 103) {
+                    log('jwsession 无效，尝试账号密码登录...')
+                    status_code = 4;
+                    PunchInBack = 0;
+                    loginBack = 0;
+                    await login()
+                    await $.wait(2 * 1000);
+                    if (loginBack > 0) {
+                        log('重新获取打卡列表...');
+                        await PunchIn_new()
+                        await $.wait(2 * 1000)
+                        return
+                    }
+                }
+                if (result.code == 0) {
+
+                    //晨午检判断
+                    for (let i = 0; i < result['data'].length; i++) {
+
+                        var d = new Date()
+                        var hour = d.getHours()
+                        hour = hour > 9 ? hour : '0' + hour.toString()
+                        var minute = d.getMinutes()
+                        minute = minute > 9 ? minute : '0' + minute.toString()
+                        now = hour + `:` + minute
+                        startTime = result.data.list[i].start
+                        endTime = result.data.list[i].end
+                        if (startTime < now && now < endTime) {
+                            id = result.data.list[i].id
+                        }
+
+                    }
+                    if (!id) {
+                        log("❌ 打卡失败，当前不在打卡时间段内")
+                        PunchInBack = 0;
+                        status_code = 3;
+                        return
+                    }
+                    if (id > 0) {
+                        log("获取成功，开始打卡")
+                        PunchInBack = 1
+                    }
+
+                }
+                if (result.code != 0 && result.code != 103) {
+                    log(`❌ 获取失败，原因：${error}`)
+                    PunchInBack = 0
+                }
+
+            } catch (e) {
+                log(e)
+            } finally {
+                resolve();
+            }
+        }, timeout)
+    })
+}
+
+
+/**
+ * 请求地址信息
+ */
+function requestAddress_new(timeout = 3 * 1000) {
+    return new Promise((resolve) => {
+        location = location.split(',')
+        let url = {
+            url: `https://apis.map.qq.com/ws/geocoder/v1/?key=A3YBZ-NC5RU-MFYVV-BOHND-RO3OT-ABFCR&location=${location[1]},${location[0]}`,
+        }
+        $.get(url, async (error, response, data) => {
+            try {
+                let result = data == "undefined" ? await requestAddress_new() : JSON.parse(data);
+                if (result.status == 0) {
+                    log(`地址信息获取成功`);
+                    //timestampMs()
+                    province = result.result.address_component.province || "";
+                    city = result.result.address_component.city || "";
+                    district = result.result.address_component.district || "";
+                    street = result.result.address_component.street || "";
+                    street_number = result.result.address_component.street_number || "";
+                    nation_code = result.result.ad_info.nation_code || "";
+                    adcode = result.result.ad_info.adcode || "";
+                    city_code = result.result.ad_info.city_code || "";
+                    town_id = result.result.address_reference.town.id || "";
+                    sign_data[`location`] = `中国/${province}/${city}/${district}/${street}/${street_number}/${nation_code}/${adcode}/${city_code}/${town_id}`
+                    //log(sign_data)
+                    //sign_data = encodeURI(_data)
+                    requestAddressBack = 1
+                } else {
+                    log(`❌ 地址信息获取失败`)
+                    requestAddressBack = 0
+                }
+
+            } catch (e) {
+                log(e)
+            } finally {
+                resolve();
+            }
+        }, timeout)
+    })
+}
+
+/**
+ * 开始打卡
+ */
+function doPunchIn_new(timeout = 3 * 1000) {
+    return new Promise((resolve) => {
+
+        let url = {
+            url: `https://gw.wozaixiaoyuan.com/health/mobile/health/save?batch=${id}`,
+            headers: {
+                "Host": "gw.wozaixiaoyuan.com",
+                "accept": "application/json, text/plain, */*",
+                "jwsession": jwsession,
+                "user-agent": "Mozilla/5.0 (Linux; Android 12; M2012K11C Build/SKQ1.220303.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.99 XWEB/4297 MMWEBSDK/20220604 Mobile Safari/537.36 MMWEBID/751 MicroMessenger/8.0.24.2166(0x28001842) WeChat/arm64 Weixin GPVersion/1 NetType/WIFI Language/zh_CN ABI/arm64 miniProgram/wxce6d08f781975d91",
+                'Content-Type': 'application/json',
+                "referer": `https://gw.wozaixiaoyuan.com/h5/mobile/health/0.2.7/health/detail?id=${id}`,
+                "accept-encoding": "gzip, deflate"
+            },
+            body: JSON.stringify(sign_data)
+
+        }
+        //log(url)
+        $.post(url, async (error, response, data) => {
+            //log(data)
+            try {
+                let result = data == "undefined" ? await doPunchIn_new() : JSON.parse(data);
+
+                //打卡情况
+                if (result.code == 0) {
+                    log("✅ 打卡成功")
+                    status_code = 1
+                }
+                if (result.code != 0) {
+                    log("❌ 打卡失败，原因：" + data)
                 }
 
             } catch (e) {
@@ -429,14 +700,14 @@ function getResult(timeout = 3 * 1000) {
 async function Envs() {
     if (wzxy) {
         if (wzxy.indexOf("@") != -1 || wzxy.indexOf("&") != -1) {
-            wzxy.split("@"&&"&").forEach((item) => {
+            wzxy.split("@" && "&").forEach((item) => {
                 wzxyArr.push(item);
             });
         }
-            // else if (wzxy.indexOf("\n") != -1) {
-            //     wzxy.split("\n").forEach((item) => {
-            //         wzxyArr.push(item);
-            //     });
+        // else if (wzxy.indexOf("\n") != -1) {
+        //     wzxy.split("\n").forEach((item) => {
+        //         wzxyArr.push(item);
+        //     });
         // }
         else {
             wzxyArr.push(wzxy);
@@ -456,12 +727,12 @@ async function SendMsg(msg) {
     if (Notify > 0) {
         if ($.isNode()) {
             var notify = require('./sendNotify');
-            await notify.sendNotify($.name, msg+ `\n打卡时间：${t()}\n`);
+            await notify.sendNotify($.name, msg + `\n打卡时间：${t()}\n`);
         } else {
             $.msg(msg);
         }
     } else {
-        //log(msg);
+        log(msg);
     }
 }
 
@@ -488,7 +759,7 @@ function randomInt(min, max) {
 /**
  * 获取毫秒时间戳
  */
-function timestampMs(){
+function timestampMs() {
     return new Date().getTime();
 }
 
@@ -496,8 +767,8 @@ function timestampMs(){
  *
  * 获取秒时间戳
  */
-function timestampS(){
-    return Date.parse(new Date())/1000;
+function timestampS() {
+    return Date.parse(new Date()) / 1000;
 }
 
 /**
@@ -526,14 +797,15 @@ function poem(timeout = 3 * 1000) {
  */
 function modify() {
 
-    fs.readFile('/ql/data/config/config.sh','utf8',function(err,dataStr){
-        if(err){
-            return log('读取文件失败！'+err)
-        }
-        else {
-            var result = dataStr.replace(/regular/g,string);
-            fs.writeFile('/ql/data/config/config.sh', result, 'utf8', function (err) {
-                if (err) {return log(err);}
+    fs.readFile('/ql/data/config/config.sh', 'utf8', function(err, dataStr) {
+        if (err) {
+            return log('读取文件失败！' + err)
+        } else {
+            var result = dataStr.replace(/regular/g, string);
+            fs.writeFile('/ql/data/config/config.sh', result, 'utf8', function(err) {
+                if (err) {
+                    return log(err);
+                }
             });
         }
     })
