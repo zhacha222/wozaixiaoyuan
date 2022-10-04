@@ -18,9 +18,7 @@
 
 5.脚本通知方式采用`青龙面板默认通知`，请在【配置文件】`config.sh`里配置
 
-6.关于各脚本的具体使用方法，请阅读脚本内的注释
-
-7.本人“我在校园”版本为 `0.9.3`（我的—设置—关于我们—版本号）,有的学校可能用的是新版我在校园，请注意！此脚本不适用新版我在校园
+6.关于各脚本的具体使用方法，请仔细阅读各脚本内的注释！
 
  <img src="https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan/raw/a6bfcc8ca55c2c0a6b22e59c75d12fd8f04395c4/jpg/C1F26C7C1B84EA696F2F50C5B3AE58FC.png" alt="daka" align=center>
 
@@ -92,13 +90,16 @@ https://jingweidu.bmcx.com/
 
 * 5.可以去这个网站对你的变量值进行格式化检验 https://www.bejson.com/
 
-* 6.这里对这个填空参数说明一下，如果是填空题，那么参数就是要填空的内容；如果是选择题，选项一 参数是`0`,选项二 参数是`1`，以此类推····
+* 6.这里对这个填空参数说明一下，对于旧版日检日报和旧版健康打卡，如果是填空题，那么参数就是要填空的内容；如果是选择题，选项一 参数是`0`,选项二 参数是`1`，以此类推····
+
+  
+  但是对于新版的健康打卡，参数就是选项的文字内容，具体看下面截图演示
+  
  
   每一题的参数都要填入`""`内，两两之间用`,`隔开，最终的参数再用`[]`括起来（另外，日检日报的体温体温已内置为36.0不用另填，但是健康打卡的体温需要自己填进填空参数里）
  
-  ***举个例子，我这的日检日报参数就是 ["0","0"]***
  
- <img src="https://ghproxy.com/https://raw.githubusercontent.com/zhacha222/wozaixiaoyuan/main/jpg/Screenshot_2022_0730_200049.jpg" width="270px" height="600px" alt="daka" align=center>
+ <img src="https://cdn.jsdelivr.net/gh/zhacha222/wozaixiaoyuan@0269fa5c87a944db638af41782e02d249e151576/jpg/%E6%9C%AA%E6%A0%87%E9%A2%98-1.png"  alt="daka" align=center>
  
  
 ## 🔔通知方式：
