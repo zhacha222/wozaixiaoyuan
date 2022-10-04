@@ -2,7 +2,7 @@
 
 ### **开源项目，不接受任何打赏，谢谢。**
 
-### **不懂的可以加交流群问，有bug也加群说，看到了就会回，群号：744087145** 
+### **不懂的可以加交流群问，有bug也加群说，看到了就会回，群号：[744087145](https://jq.qq.com/?_wv=1027&k=1deSaQ3X)** 
 
 <img src="https://cdn.jsdelivr.net/gh/zhacha222/wozaixiaoyuan@a6bfcc8ca55c2c0a6b22e59c75d12fd8f04395c4/jpg/IMG_1344.JPG" width="375px" height="667px" alt="daka" align=center>
 
