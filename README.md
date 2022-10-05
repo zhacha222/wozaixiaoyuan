@@ -141,7 +141,7 @@ https://jingweidu.bmcx.com/
 ## 🎉特别鸣谢：
 
 * [@bean661：WoZaiXiaoYuanPuncher](https://github.com/bean661/wozaixiaoyuanjkdkql)
-* [@ccwav：QLScript2](https://github.com/ccwav/QLScript2)
+* [@whyour：qinglong](https://github.com/whyour/qinglong)
 
 
 
