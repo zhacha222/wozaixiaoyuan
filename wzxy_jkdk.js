@@ -45,6 +45,7 @@
  1.0.6 log增加新版本内容
  1.0.7 增加`仅通知打卡失败`模式，可在脚本第54行修改开启
  1.0.8 适配新版健康打卡
+ 1.0.9 修复一处单词错误
 
  */
 //cron: 5 0 * * *
@@ -62,9 +63,9 @@ const {
     log
 } = console;
 //////////////////////
-let scriptVersion = "1.0.8";
+let scriptVersion = "1.0.9";
 let scriptVersionLatest = '';
-let update_data = "1.0.8 适配新版健康打卡"; //新版本更新内容
+let update_data = "1.0.9 修复一处单词错误"; //新版本更新内容
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -552,7 +553,7 @@ function PunchIn_new(timeout = 3 * 1000) {
                 if (result.code == 0) {
 
                     //晨午检判断
-                    for (let i = 0; i < result['data'].length; i++) {
+                    for (let i = 0; i < result.data.list.length; i++) {
 
                         var d = new Date()
                         var hour = d.getHours()
