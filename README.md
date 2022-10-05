@@ -118,7 +118,7 @@ https://jingweidu.bmcx.com/
 **右图是`企业微信应用`通知页面截图**
   
  
- <img src="https://cdn.jsdelivr.net/gh/zhacha222/wozaixiaoyuan@e149d21fd4ae3e8cfef8654708c2fbe6fb54a17f/jpg/A97F963D4799767B81EDDD73A763BF19.jpg" width="270px" height="600px" alt="daka" align=right>
+ <img src="https://cdn.jsdelivr.net/gh/zhacha222/wozaixiaoyuan@e149d21fd4ae3e8cfef8654708c2fbe6fb54a17f/jpg/A97F963D4799767B81EDDD73A763BF19.jpg" width="243px" height="540px" alt="daka" align=right>
 
 |通知名称|通知渠道|推送方式|使用教程|
 |:---:|:---:|:---|:---|
