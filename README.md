@@ -10,7 +10,7 @@
 
 ## 📌须知：
 
-* 1.只支持青龙面板（本人青龙版本2.10.13），搭建教程自行百度
+* 1.只支持青龙面板（本人青龙版本2.10.13），部署教程 ==> [点击查看](https://github.com/whyour/qinglong#%E9%83%A8%E7%BD%B2)
 
 * 2.本库脚本通用 `wzxy`这一个变量
 
@@ -27,10 +27,27 @@
 
 ## 📍拉库：
 
+- 2.12.1之前版本青龙拉库:   
+
 ```
-ql repo https://github.com/zhacha222/wozaixiaoyuan.git  "wzxy_|sendNotify" "" "sendNotify"
+定时任务——新建任务
+名称：我在校园拉库
+命令：ql repo https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan.git  "wzxy_|sendNotify" "" "sendNotify"
+定时：0 0 * * *
 ```
-如果网络不好拉库失败，请自行添加拉库代理 `https://ghproxy.com/`
+
+- 2.12.1之后版本青龙拉库:
+
+```
+订阅管理——新建订阅
+名称：我在校园拉库
+类型：公开仓库
+链接：https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan.git
+白名单：wzxy_|sendNotify
+定时类型：crontab
+定时：0 0 * * * 
+其他不填
+```
 
 	
  <img src="https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan/blob/c4b7b5bafc9c5e9b346193927512d2dba37a6578/jpg/laku.png" width="949px" height="460px" alt="daka" align=center>
