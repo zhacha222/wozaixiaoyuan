@@ -1,24 +1,26 @@
 # 我在校园 青龙面板
 
-### **开源项目，不接受任何打赏，谢谢。**
+> **开源项目，不接受任何打赏，谢谢！**
 
-### **不懂的可以加交流群问，有bug也加群说，看到了就会回，群号：[744087145](https://jq.qq.com/?_wv=1027&k=1deSaQ3X)** 
+## 🐧企鹅群
+> **不懂的可以加交流群问，发现bug也加群说，看到了就会回，群号：[744087145](https://jq.qq.com/?_wv=1027&k=1deSaQ3X)** 
 
 <img src="https://cdn.jsdelivr.net/gh/zhacha222/wozaixiaoyuan@a6bfcc8ca55c2c0a6b22e59c75d12fd8f04395c4/jpg/IMG_1344.JPG" width="375px" height="667px" alt="daka" align=center>
 
+
 ## 📌须知：
 
-1.只支持青龙面板（本人青龙版本2.10.13），搭建教程自行百度
+* 1.只支持青龙面板（本人青龙版本2.10.13），搭建教程自行百度
 
-2.本库脚本通用 `wzxy`这一个变量
+* 2.本库脚本通用 `wzxy`这一个变量
 
-3.脚本变量只推荐在青龙的【环境变量】页添加，有强迫症在【配置文件】`config.sh`中添加的如果出现问题自己解决
+* 3.脚本变量只推荐在青龙的【环境变量】页添加，有强迫症在【配置文件】`config.sh`中添加的如果出现问题自己解决
 
-4.支持多用户，每一用户在【环境变量】单独新建变量`wzxy`，切勿一个变量内填写多个用户的参数
+* 4.支持多用户，每一用户在【环境变量】单独新建变量`wzxy`，切勿一个变量内填写多个用户的参数
 
-5.脚本通知方式采用`青龙面板默认通知`，请在【配置文件】`config.sh`里配置
+* 5.脚本通知方式采用`青龙面板默认通知`，请在【配置文件】`config.sh`里配置
 
-6.关于各脚本的具体使用方法，请仔细阅读各脚本内的注释！
+* 6.关于各脚本的具体使用方法，请仔细阅读各脚本内的注释！
 
  <img src="https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan/raw/a6bfcc8ca55c2c0a6b22e59c75d12fd8f04395c4/jpg/C1F26C7C1B84EA696F2F50C5B3AE58FC.png" alt="daka" align=center>
 
@@ -90,13 +92,15 @@ https://jingweidu.bmcx.com/
 
 * 5.可以去这个网站对你的变量值进行格式化检验 https://www.bejson.com/
 
-* 6.这里对这个填空参数说明一下，对于旧版日检日报和旧版健康打卡，如果是填空题，那么参数就是要填空的内容；如果是选择题，选项一 参数是`0`,选项二 参数是`1`，以此类推····
+* 6.这里对这个填空参数说明一下：
 
-  
-  但是对于新版的健康打卡，参数就是选项的文字内容，具体看下面截图演示
-  
+	> 对于 **旧版日检日报和旧版健康打卡**，
+	如果是填空题，那么参数就是要填空的内容；
+	如果是选择题，选项一 参数是`0`,选项二 参数是`1`，以此类推····
+	
+	> 但是，对于**新版的健康打卡**，不管选择还是填空题，参数都是选项的 **文字内容**，具体看下面截图演示
  
-  每一题的参数都要填入`""`内，两两之间用`,`隔开，最终的参数再用`[]`括起来（另外，日检日报的体温体温已内置为36.0不用另填，但是健康打卡的体温需要自己填进填空参数里）
+	每一题的参数都要填入`""`内，两两之间用`,`隔开，最终的参数再用`[]`括起来（另外，日检日报的体温体温已内置为36.0不用另填，但是健康打卡的体温需要自己填进填空参数里）
  
  
  <img src="https://cdn.jsdelivr.net/gh/zhacha222/wozaixiaoyuan@0269fa5c87a944db638af41782e02d249e151576/jpg/%E6%9C%AA%E6%A0%87%E9%A2%98-1.png"  alt="daka" align=center>
@@ -109,6 +113,12 @@ https://jingweidu.bmcx.com/
 
  <img src="https://ghproxy.com/https://github.com/zhacha222/wozaixiaoyuan/blob/771f01a6a2228ee16f53ed193a923450624595e4/jpg/tz.png" width="951px" height="460px" alt="daka" align=center>
  
+   
+ 
+**右图是`企业微信应用`通知页面截图**
+  
+ 
+ <img src="https://cdn.jsdelivr.net/gh/zhacha222/wozaixiaoyuan@e149d21fd4ae3e8cfef8654708c2fbe6fb54a17f/jpg/A97F963D4799767B81EDDD73A763BF19.jpg" width="270px" height="600px" alt="daka" align=right>
 
 |通知名称|通知渠道|推送方式|使用教程|
 |:---:|:---:|:---|:---|
@@ -123,9 +133,16 @@ https://jingweidu.bmcx.com/
 |[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)|QQ（QQ机器人）|一对一，一对多||
 |[gotify](https://gotify.net/docs/)|自建消息推送服务（ws）|一对一，一对多||
 
-下面是`企业微信应用`通知截图
 
-<img src="https://cdn.jsdelivr.net/gh/zhacha222/wozaixiaoyuan@e149d21fd4ae3e8cfef8654708c2fbe6fb54a17f/jpg/A97F963D4799767B81EDDD73A763BF19.jpg" width="270px" height="600px" alt="daka" align=center>
+
+
+
+
+## 🎉特别鸣谢：
+
+* [@bean661：WoZaiXiaoYuanPuncher](https://github.com/bean661/wozaixiaoyuanjkdkql)
+* [@ccwav：QLScript2](https://github.com/ccwav/QLScript2)
+
 
 
 
