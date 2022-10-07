@@ -263,7 +263,7 @@ function PunchIn(timeout = 3 * 1000) {
         }
 
         $.post(url, async (error, response, data) => {
-            log(data)
+            //log(data)
             try {
                 let result = data == "undefined" ? await PunchIn() : JSON.parse(data);
                 if (result.code == 103) {
@@ -284,7 +284,7 @@ function PunchIn(timeout = 3 * 1000) {
                     id = result.data.id
                     endDatetime =result.data.endDatetime
                     state =result.data.state //state为2表示未返校，为5表示已返校，为4表示当前已超过返校时间
-                    log(state)
+                    //log(state)
                     if (state==5){
                         log('🈚️ 暂无返校任务，跳过返校...')
                         wait = 1
