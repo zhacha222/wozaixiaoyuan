@@ -39,13 +39,15 @@
  1.0.0 完成 的基本功能
  1.0.1 优化通知
  1.0.2 新增`仅通知返校成功`模式，可在修改脚本第48行开启
+ 1.0.3 务必更新，适配我在校园新接口，1.0.2版本已失效！！！
+ 
 
  */
 //cron: 50 23 * * *
 
 //===============通知设置=================//
 const Notify = 1; //0为关闭通知，1为打开通知,默认为1
-const OnlyfaxiaoNotify = 0; //0为关闭仅返校成功通知，1为打开仅返校成功通知,默认为0
+const OnlyfaxiaoNotify = 1; //0为关闭仅返校成功通知，1为打开仅返校成功通知,默认为0
 ////////////////////////////////////////////
 
 const $ = new Env('报备自动确认返校');
@@ -54,9 +56,9 @@ const fs = require("fs");
 const request = require('request');
 const {log} = console;
 //////////////////////
-let scriptVersion = "1.0.2";
+let scriptVersion = "1.0.3";
 let scriptVersionLatest = '';
-let update_data = "1.0.2 新增`仅通知返校成功`模式，可在修改脚本第48行开启"; //新版本更新内容
+let update_data = "1.0.3 务必更新，适配我在校园新接口，1.0.2版本已失效！！！"; //新版本更新内容
 //我在校园账号数据
 let wzxy = ($.isNode() ? process.env.wzxy : $.getdata("wzxy")) || "";
 let wzxyArr = [];
@@ -252,7 +254,7 @@ function PunchIn(timeout = 3 * 1000) {
     return new Promise((resolve) => {
 
         let url = {
-            url: "https://gw.wozaixiaoyuan.com/out/mobile/out/getList?page=1&size=8",
+            url: "https://gw.wozaixiaoyuan.com/out/mobile/out/getOne",
             headers: {
                 'jwsession': jwsession,
                 'Content-Type': 'application/json'
@@ -261,7 +263,7 @@ function PunchIn(timeout = 3 * 1000) {
         }
 
         $.post(url, async (error, response, data) => {
-            //log(data)
+            log(data)
             try {
                 let result = data == "undefined" ? await PunchIn() : JSON.parse(data);
                 if (result.code == 103) {
@@ -279,10 +281,10 @@ function PunchIn(timeout = 3 * 1000) {
                     }
                 }
                 if (result.code == 0) {
-                    id = result.data[0].id
-                    endDatetime =result.data[0].endDatetime
-                    state =result.data[0].state //state为2表示未返校，为5表示已返校，为4表示当前已超过返校时间
-                    //log(state)
+                    id = result.data.id
+                    endDatetime =result.data.endDatetime
+                    state =result.data.state //state为2表示未返校，为5表示已返校，为4表示当前已超过返校时间
+                    log(state)
                     if (state==5){
                         log('🈚️ 暂无返校任务，跳过返校...')
                         wait = 1
