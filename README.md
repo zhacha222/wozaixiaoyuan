@@ -157,7 +157,7 @@ https://jingweidu.bmcx.com/
 
 ## 🎉特别鸣谢：
 
-* [@bean661：WoZaiXiaoYuanPuncher](https://github.com/bean661/wozaixiaoyuanjkdkql)
+* [@bean661：wozaixiaoyuanjkdkql](https://github.com/bean661/wozaixiaoyuanjkdkql)
 * [@whyour：qinglong](https://github.com/whyour/qinglong)
 
 
